@@ -1,0 +1,58 @@
+import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
+import { Pill, Boxes, ShoppingCart, Home } from "lucide-react";
+
+export const Route = createFileRoute("/app")({
+  component: AppLayout,
+});
+
+function AppLayout() {
+  const { pathname } = useLocation();
+  const nav = [
+    { to: "/app/inventory", label: "Inventory", icon: Boxes },
+    { to: "/app/pos", label: "POS", icon: ShoppingCart },
+  ];
+  return (
+    <div className="min-h-screen flex bg-secondary/30">
+      <aside className="w-60 border-r border-border bg-card hidden md:flex flex-col">
+        <div className="h-16 px-5 flex items-center gap-2 border-b border-border">
+          <span className="size-8 rounded-lg grid place-items-center text-primary-foreground" style={{ background: "var(--gradient-hero)" }}>
+            <Pill className="size-4" />
+          </span>
+          <div>
+            <div className="font-display font-bold text-sm leading-tight">Droga Pharmacy</div>
+            <div className="text-[10px] text-muted-foreground">MedixPharm</div>
+          </div>
+        </div>
+        <nav className="p-3 flex-1 space-y-1">
+          {nav.map((n) => {
+            const Icon = n.icon;
+            const active = pathname.startsWith(n.to);
+            return (
+              <Link key={n.to} to={n.to} className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition ${active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground"}`}>
+                <Icon className="size-4" /> {n.label}
+              </Link>
+            );
+          })}
+        </nav>
+        <Link to="/" className="m-3 flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-secondary">
+          <Home className="size-3.5" /> Back to website
+        </Link>
+      </aside>
+      {/* Mobile top nav */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-card border-t border-border grid grid-cols-2">
+        {nav.map((n) => {
+          const Icon = n.icon;
+          const active = pathname.startsWith(n.to);
+          return (
+            <Link key={n.to} to={n.to} className={`flex flex-col items-center py-3 text-xs ${active ? "text-primary" : "text-muted-foreground"}`}>
+              <Icon className="size-5 mb-0.5" /> {n.label}
+            </Link>
+          );
+        })}
+      </div>
+      <main className="flex-1 min-w-0 pb-20 md:pb-0">
+        <Outlet />
+      </main>
+    </div>
+  );
+}
