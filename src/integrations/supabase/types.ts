@@ -14,7 +14,129 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      medicines: {
+        Row: {
+          barcode: string | null
+          batch_number: string | null
+          brand: string | null
+          category: string | null
+          cost_price: number
+          created_at: string
+          expiry_date: string | null
+          id: string
+          name: string
+          quantity: number
+          reorder_level: number
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          barcode?: string | null
+          batch_number?: string | null
+          brand?: string | null
+          category?: string | null
+          cost_price?: number
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          name: string
+          quantity?: number
+          reorder_level?: number
+          unit_price?: number
+          updated_at?: string
+        }
+        Update: {
+          barcode?: string | null
+          batch_number?: string | null
+          brand?: string | null
+          category?: string | null
+          cost_price?: number
+          created_at?: string
+          expiry_date?: string | null
+          id?: string
+          name?: string
+          quantity?: number
+          reorder_level?: number
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sale_items: {
+        Row: {
+          created_at: string
+          id: string
+          medicine_id: string | null
+          medicine_name: string
+          quantity: number
+          sale_id: string
+          subtotal: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          medicine_id?: string | null
+          medicine_name: string
+          quantity: number
+          sale_id: string
+          subtotal: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          medicine_id?: string | null
+          medicine_name?: string
+          quantity?: number
+          sale_id?: string
+          subtotal?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sale_items_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sale_items_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sales: {
+        Row: {
+          cashier_name: string | null
+          created_at: string
+          id: string
+          payment_method: string
+          sale_number: string
+          total_amount: number
+        }
+        Insert: {
+          cashier_name?: string | null
+          created_at?: string
+          id?: string
+          payment_method?: string
+          sale_number: string
+          total_amount?: number
+        }
+        Update: {
+          cashier_name?: string | null
+          created_at?: string
+          id?: string
+          payment_method?: string
+          sale_number?: string
+          total_amount?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
