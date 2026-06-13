@@ -1,7 +1,14 @@
-import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
-import { Pill, Boxes, ShoppingCart, Home } from "lucide-react";
+import { createFileRoute, Link, Outlet, useLocation, useNavigate, redirect } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Pill, Boxes, ShoppingCart, Home, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app")({
+  beforeLoad: async () => {
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) throw redirect({ to: "/auth" });
+  },
   component: AppLayout,
 });
 
