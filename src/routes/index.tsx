@@ -42,7 +42,7 @@ function Index() {
             <a href="#contact" className="hover:text-foreground">Contact</a>
           </nav>
           <div className="flex items-center gap-2">
-            <Button asChild size="sm" variant="outline"><a href="/app/inventory">Open App</a></Button>
+            <Button asChild size="sm" variant="outline"><a href="/auth">Staff Sign in</a></Button>
             <Button asChild size="sm"><a href="#contact">Request Demo</a></Button>
           </div>
         </div>

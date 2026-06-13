@@ -1,12 +1,28 @@
-import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
-import { Pill, Boxes, ShoppingCart, Home } from "lucide-react";
+import { createFileRoute, Link, Outlet, useLocation, useNavigate, redirect } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Pill, Boxes, ShoppingCart, Home, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app")({
+  beforeLoad: async () => {
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) throw redirect({ to: "/auth" });
+  },
   component: AppLayout,
 });
 
 function AppLayout() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null));
+  }, []);
+  async function signOut() {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
   const nav = [
     { to: "/app/inventory", label: "Inventory", icon: Boxes },
     { to: "/app/pos", label: "POS", icon: ShoppingCart },
@@ -34,9 +50,15 @@ function AppLayout() {
             );
           })}
         </nav>
-        <Link to="/" className="m-3 flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-secondary">
-          <Home className="size-3.5" /> Back to website
-        </Link>
+        <div className="m-3 space-y-1">
+          {email && <div className="px-3 text-[11px] text-muted-foreground truncate">{email}</div>}
+          <Button variant="ghost" size="sm" className="w-full justify-start" onClick={signOut}>
+            <LogOut className="size-3.5 mr-2" /> Sign out
+          </Button>
+          <Link to="/" className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-secondary">
+            <Home className="size-3.5" /> Back to website
+          </Link>
+        </div>
       </aside>
       {/* Mobile top nav */}
       <div className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-card border-t border-border grid grid-cols-2">
