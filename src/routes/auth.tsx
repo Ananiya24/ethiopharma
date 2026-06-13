@@ -66,30 +66,39 @@ function AuthPage() {
             <div className="text-xs text-muted-foreground">Staff sign-in</div>
           </div>
         </div>
-        <h1 className="text-2xl font-bold mb-1">{mode === "sign_in" ? "Welcome back" : "Create an account"}</h1>
+        <div className="grid grid-cols-2 gap-1 p-1 bg-secondary rounded-lg mb-6">
+          <button
+            type="button"
+            onClick={() => setMode("sign_in")}
+            className={`py-2 text-sm rounded-md transition ${mode === "sign_in" ? "bg-card shadow-sm font-medium" : "text-muted-foreground"}`}
+          >
+            Sign in
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("sign_up")}
+            className={`py-2 text-sm rounded-md transition ${mode === "sign_up" ? "bg-card shadow-sm font-medium" : "text-muted-foreground"}`}
+          >
+            Create account
+          </button>
+        </div>
+        <h1 className="text-2xl font-bold mb-1">{mode === "sign_in" ? "Welcome back" : "Create staff account"}</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          {mode === "sign_in" ? "Sign in to access inventory and POS." : "Register a new staff account."}
+          {mode === "sign_in" ? "Sign in to access inventory and POS." : "Register a new staff account to get started."}
         </p>
         <form onSubmit={submit} className="space-y-4">
           <div>
             <Label htmlFor="email" className="text-xs">Email</Label>
-            <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="staff@drogapharmacy.com" />
           </div>
           <div>
-            <Label htmlFor="pw" className="text-xs">Password</Label>
-            <Input id="pw" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Label htmlFor="pw" className="text-xs">Password (min 6 characters)</Label>
+            <Input id="pw" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Please wait…" : mode === "sign_in" ? "Sign in" : "Create account"}
           </Button>
         </form>
-        <button
-          type="button"
-          onClick={() => setMode(mode === "sign_in" ? "sign_up" : "sign_in")}
-          className="mt-5 text-sm text-muted-foreground hover:text-foreground w-full text-center"
-        >
-          {mode === "sign_in" ? "Need an account? Sign up" : "Already have an account? Sign in"}
-        </button>
       </Card>
     </div>
   );
