@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useLocation, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Pill, Boxes, ShoppingCart, Home, LogOut } from "lucide-react";
+import { Pill, Boxes, ShoppingCart, Home, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app")({
@@ -24,6 +24,7 @@ function AppLayout() {
     navigate({ to: "/auth", replace: true });
   }
   const nav = [
+    { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/app/inventory", label: "Inventory", icon: Boxes },
     { to: "/app/pos", label: "POS", icon: ShoppingCart },
   ];
@@ -61,7 +62,7 @@ function AppLayout() {
         </div>
       </aside>
       {/* Mobile top nav */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-card border-t border-border grid grid-cols-2">
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-card border-t border-border grid grid-cols-3">
         {nav.map((n) => {
           const Icon = n.icon;
           const active = pathname.startsWith(n.to);
