@@ -65,7 +65,7 @@ function AppLayout() {
         </div>
       </aside>
       {/* Mobile top nav */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-card border-t border-border grid grid-cols-3">
+      <div className={`md:hidden fixed bottom-0 inset-x-0 z-50 bg-card border-t border-border grid`} style={{ gridTemplateColumns: `repeat(${nav.length}, minmax(0, 1fr))` }}>
         {nav.map((n) => {
           const Icon = n.icon;
           const active = pathname.startsWith(n.to);
