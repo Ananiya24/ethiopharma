@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Pill, Boxes, ShoppingCart, Home, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRole } from "@/hooks/use-role";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
@@ -16,6 +17,7 @@ function AppLayout() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [email, setEmail] = useState<string | null>(null);
+  const { isOwner, role } = useRole();
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null));
   }, []);
@@ -23,11 +25,12 @@ function AppLayout() {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   }
-  const nav = [
-    { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { to: "/app/inventory", label: "Inventory", icon: Boxes },
-    { to: "/app/pos", label: "POS", icon: ShoppingCart },
+  const allNav = [
+    { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard, ownerOnly: true },
+    { to: "/app/inventory", label: "Inventory", icon: Boxes, ownerOnly: false },
+    { to: "/app/pos", label: "POS", icon: ShoppingCart, ownerOnly: false },
   ];
+  const nav = allNav.filter((n) => !n.ownerOnly || isOwner);
   return (
     <div className="min-h-screen flex bg-secondary/30">
       <aside className="w-60 border-r border-border bg-card hidden md:flex flex-col">
@@ -36,8 +39,8 @@ function AppLayout() {
             <Pill className="size-4" />
           </span>
           <div>
-            <div className="font-display font-bold text-sm leading-tight">Droga Pharmacy</div>
-            <div className="text-[10px] text-muted-foreground">MedixPharm</div>
+            <div className="font-display font-bold text-sm leading-tight">Inventory Management</div>
+            <div className="text-[10px] text-muted-foreground">for Pharmacy{role ? ` · ${role}` : ""}</div>
           </div>
         </div>
         <nav className="p-3 flex-1 space-y-1">
@@ -62,7 +65,7 @@ function AppLayout() {
         </div>
       </aside>
       {/* Mobile top nav */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-card border-t border-border grid grid-cols-3">
+      <div className={`md:hidden fixed bottom-0 inset-x-0 z-50 bg-card border-t border-border grid`} style={{ gridTemplateColumns: `repeat(${nav.length}, minmax(0, 1fr))` }}>
         {nav.map((n) => {
           const Icon = n.icon;
           const active = pathname.startsWith(n.to);

@@ -9,7 +9,7 @@ import { Search, Plus, Minus, Trash2, ShoppingCart, Receipt, CheckCircle2 } from
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/pos")({
-  head: () => ({ meta: [{ title: "POS — Droga Pharmacy" }] }),
+  head: () => ({ meta: [{ title: "POS — Inventory Management" }] }),
   component: POSPage,
 });
 
@@ -196,7 +196,7 @@ function POSPage() {
                 <CheckCircle2 className="size-7" />
               </div>
               <h3 className="font-bold text-lg">Sale Completed</h3>
-              <div className="text-xs text-muted-foreground">Droga Pharmacy · {lastReceipt.saleNumber}</div>
+              <div className="text-xs text-muted-foreground">Inventory Management · {lastReceipt.saleNumber}</div>
             </div>
             <div className="border-t border-dashed border-border pt-3 space-y-1.5 text-sm">
               {lastReceipt.items.map((i) => (

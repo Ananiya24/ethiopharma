@@ -4,8 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Droga Pharmacy — Inventory & POS" },
-      { name: "description", content: "Inventory management and point of sale for Droga Pharmacy." },
+      { title: "Inventory Management for Pharmacy" },
+      { name: "description", content: "Inventory management and point of sale system for pharmacies." },
     ],
   }),
   beforeLoad: async () => {
