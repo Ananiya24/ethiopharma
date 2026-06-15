@@ -26,8 +26,14 @@ function AuthPage() {
   async function routeAfterLogin() {
     const { data: u } = await supabase.auth.getUser();
     const uid = u.user?.id;
+    const userEmail = u.user?.email;
     if (!uid) return;
-    const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid).maybeSingle();
+    let { data } = await supabase.from("user_roles").select("role").eq("user_id", uid).maybeSingle();
+    // Auto-grant owner role to the designated owner email if no role row exists yet.
+    if (!data && userEmail === OWNER_EMAIL) {
+      await supabase.from("user_roles").insert({ user_id: uid, role: "owner" });
+      data = { role: "owner" };
+    }
     const r = data?.role as Role | undefined;
     navigate({ to: r === "pharmacist" ? "/app/pos" : "/app/dashboard", replace: true });
   }
