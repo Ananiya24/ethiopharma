@@ -59,12 +59,13 @@ function AuthPage() {
           options: { emailRedirectTo: `${window.location.origin}/app` },
         });
         if (error) throw error;
+        const assignedRole: Role = email === OWNER_EMAIL ? "owner" : role;
         // If session is returned immediately (email confirmation disabled), assign role now.
         if (data.session && data.user) {
-          const { error: rErr } = await supabase.from("user_roles").insert({ user_id: data.user.id, role });
+          const { error: rErr } = await supabase.from("user_roles").insert({ user_id: data.user.id, role: assignedRole });
           if (rErr) console.error(rErr);
         }
-        toast.success(`Account created as ${role}. Signing you in…`);
+        toast.success(`Account created as ${assignedRole}. Signing you in…`);
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
