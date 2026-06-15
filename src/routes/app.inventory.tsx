@@ -11,7 +11,7 @@ import { Plus, Search, Pencil, Trash2, AlertTriangle, Package } from "lucide-rea
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/inventory")({
-  head: () => ({ meta: [{ title: "Inventory — Droga Pharmacy" }] }),
+  head: () => ({ meta: [{ title: "Inventory — Inventory Management" }] }),
   component: InventoryPage,
 });
 
