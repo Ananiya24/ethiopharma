@@ -14,6 +14,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 type Role = "owner" | "pharmacist";
+const OWNER_EMAIL = "owner@pharmacy.com";
 
 function AuthPage() {
   const navigate = useNavigate();
