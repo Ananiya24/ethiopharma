@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Pill, Boxes, ShoppingCart, Home, LogOut, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRole } from "@/hooks/use-role";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
@@ -16,6 +17,7 @@ function AppLayout() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [email, setEmail] = useState<string | null>(null);
+  const { isOwner, role } = useRole();
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null));
   }, []);
@@ -23,11 +25,12 @@ function AppLayout() {
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
   }
-  const nav = [
-    { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { to: "/app/inventory", label: "Inventory", icon: Boxes },
-    { to: "/app/pos", label: "POS", icon: ShoppingCart },
+  const allNav = [
+    { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard, ownerOnly: true },
+    { to: "/app/inventory", label: "Inventory", icon: Boxes, ownerOnly: false },
+    { to: "/app/pos", label: "POS", icon: ShoppingCart, ownerOnly: false },
   ];
+  const nav = allNav.filter((n) => !n.ownerOnly || isOwner);
   return (
     <div className="min-h-screen flex bg-secondary/30">
       <aside className="w-60 border-r border-border bg-card hidden md:flex flex-col">
