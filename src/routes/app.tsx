@@ -39,8 +39,8 @@ function AppLayout() {
             <Pill className="size-4" />
           </span>
           <div>
-            <div className="font-display font-bold text-sm leading-tight">Droga Pharmacy</div>
-            <div className="text-[10px] text-muted-foreground">MedixPharm</div>
+            <div className="font-display font-bold text-sm leading-tight">Inventory Management</div>
+            <div className="text-[10px] text-muted-foreground">for Pharmacy{role ? ` · ${role}` : ""}</div>
           </div>
         </div>
         <nav className="p-3 flex-1 space-y-1">
