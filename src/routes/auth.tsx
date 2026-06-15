@@ -14,6 +14,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 type Role = "owner" | "pharmacist";
+const OWNER_EMAIL = "owner@pharmacy.com";
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -26,8 +27,14 @@ function AuthPage() {
   async function routeAfterLogin() {
     const { data: u } = await supabase.auth.getUser();
     const uid = u.user?.id;
+    const userEmail = u.user?.email;
     if (!uid) return;
-    const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid).maybeSingle();
+    let { data } = await supabase.from("user_roles").select("role").eq("user_id", uid).maybeSingle();
+    // Auto-grant owner role to the designated owner email if no role row exists yet.
+    if (!data && userEmail === OWNER_EMAIL) {
+      await supabase.from("user_roles").insert({ user_id: uid, role: "owner" });
+      data = { role: "owner" };
+    }
     const r = data?.role as Role | undefined;
     navigate({ to: r === "pharmacist" ? "/app/pos" : "/app/dashboard", replace: true });
   }
@@ -52,12 +59,13 @@ function AuthPage() {
           options: { emailRedirectTo: `${window.location.origin}/app` },
         });
         if (error) throw error;
+        const assignedRole: Role = email === OWNER_EMAIL ? "owner" : role;
         // If session is returned immediately (email confirmation disabled), assign role now.
         if (data.session && data.user) {
-          const { error: rErr } = await supabase.from("user_roles").insert({ user_id: data.user.id, role });
+          const { error: rErr } = await supabase.from("user_roles").insert({ user_id: data.user.id, role: assignedRole });
           if (rErr) console.error(rErr);
         }
-        toast.success(`Account created as ${role}. Signing you in…`);
+        toast.success(`Account created as ${assignedRole}. Signing you in…`);
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
