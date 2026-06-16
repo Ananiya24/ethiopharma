@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      medicine_activity_log: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          medicine_id: string | null
+          medicine_name: string
+          user_email: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          medicine_id?: string | null
+          medicine_name: string
+          user_email?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          medicine_id?: string | null
+          medicine_name?: string
+          user_email?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       medicines: {
         Row: {
           barcode: string | null
