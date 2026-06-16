@@ -109,7 +109,7 @@ function InventoryPage() {
       medicine_name: medicineName,
       user_id: u.user.id,
       user_email: u.user.email,
-      details,
+      details: details as never,
     });
   }
 
@@ -130,7 +130,7 @@ function InventoryPage() {
 
     setSaving(true);
     try {
-      const payload: Record<string, unknown> = {
+      const payload = {
         name: form.name.trim(),
         brand: form.brand.trim() || null,
         category: form.category.trim() || null,
@@ -140,25 +140,24 @@ function InventoryPage() {
         unit_price,
         expiry_date: form.expiry_date,
         reorder_level,
+        ...(isOwner ? { cost_price } : {}),
       };
-      // Only owner sets cost price; pharmacist edits don't touch it.
-      if (isOwner) payload.cost_price = cost_price;
 
       if (editing) {
         const changes: Record<string, { from: unknown; to: unknown }> = {};
-        (Object.keys(payload) as (keyof Medicine)[]).forEach((k) => {
-          const newV = payload[k as string];
+        (Object.keys(payload) as Array<keyof typeof payload>).forEach((k) => {
+          const newV = (payload as Record<string, unknown>)[k as string];
           const oldV = (editing as unknown as Record<string, unknown>)[k as string];
-          if (String(newV ?? "") !== String(oldV ?? "")) changes[k] = { from: oldV, to: newV };
+          if (String(newV ?? "") !== String(oldV ?? "")) changes[k as string] = { from: oldV, to: newV };
         });
         const { error } = await supabase.from("medicines").update(payload).eq("id", editing.id);
         if (error) throw error;
-        await logActivity("update", editing.id, payload.name as string, { changes });
+        await logActivity("update", editing.id, payload.name, { changes });
         toast.success("Medicine updated");
       } else {
         const { data, error } = await supabase.from("medicines").insert(payload).select("id").single();
         if (error) throw error;
-        await logActivity("create", data?.id ?? null, payload.name as string, { values: payload });
+        await logActivity("create", data?.id ?? null, payload.name, { values: payload as Record<string, unknown> });
         toast.success("Medicine added");
       }
       setOpen(false);
