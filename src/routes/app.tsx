@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useLocation, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Pill, Boxes, ShoppingCart, Home, LogOut, LayoutDashboard } from "lucide-react";
+import { Pill, Boxes, ShoppingCart, Home, LogOut, LayoutDashboard, Users, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRole } from "@/hooks/use-role";
 
@@ -29,7 +29,9 @@ function AppLayout() {
     { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard, ownerOnly: true },
     { to: "/app/inventory", label: "Inventory", icon: Boxes, ownerOnly: false },
     { to: "/app/pos", label: "POS", icon: ShoppingCart, ownerOnly: false },
-  ];
+    { to: "/app/staff", label: "Staff", icon: Users, ownerOnly: true },
+    { to: "/app/activity", label: "Activity", icon: Activity, ownerOnly: true },
+  ] as const;
   const nav = allNav.filter((n) => !n.ownerOnly || isOwner);
   return (
     <div className="min-h-screen flex bg-secondary/30">
