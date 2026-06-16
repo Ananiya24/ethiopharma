@@ -18,10 +18,8 @@ const OWNER_EMAIL = "owner@pharmacy.com";
 
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"sign_in" | "sign_up">("sign_in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<Role>("pharmacist");
   const [loading, setLoading] = useState(false);
 
   async function routeAfterLogin() {
@@ -30,12 +28,18 @@ function AuthPage() {
     const userEmail = u.user?.email;
     if (!uid) return;
     let { data } = await supabase.from("user_roles").select("role").eq("user_id", uid).maybeSingle();
-    // Auto-grant owner role to the designated owner email if no role row exists yet.
+    // Bootstrap: auto-grant owner role to the designated owner email on first login.
     if (!data && userEmail === OWNER_EMAIL) {
       await supabase.from("user_roles").insert({ user_id: uid, role: "owner" });
       data = { role: "owner" };
     }
     const r = data?.role as Role | undefined;
+    if (!r) {
+      // No role assigned — sign them out, account must be created by the owner.
+      await supabase.auth.signOut();
+      toast.error("This account has no role assigned. Ask the owner to create your account.");
+      return;
+    }
     navigate({ to: r === "pharmacist" ? "/app/pos" : "/app/dashboard", replace: true });
   }
 
@@ -50,28 +54,12 @@ function AuthPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (password.length < 6) { toast.error("Password must be at least 6 characters"); return; }
     setLoading(true);
     try {
-      if (mode === "sign_up") {
-        const { data, error } = await supabase.auth.signUp({
-          email, password,
-          options: { emailRedirectTo: `${window.location.origin}/app` },
-        });
-        if (error) throw error;
-        const assignedRole: Role = email === OWNER_EMAIL ? "owner" : role;
-        // If session is returned immediately (email confirmation disabled), assign role now.
-        if (data.session && data.user) {
-          const { error: rErr } = await supabase.from("user_roles").insert({ user_id: data.user.id, role: assignedRole });
-          if (rErr) console.error(rErr);
-        }
-        toast.success(`Account created as ${assignedRole}. Signing you in…`);
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Authentication failed");
+      toast.error(e instanceof Error ? e.message : "Sign in failed");
     } finally {
       setLoading(false);
     }
@@ -89,59 +77,21 @@ function AuthPage() {
             <div className="text-xs text-muted-foreground">for Pharmacy</div>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-1 p-1 bg-secondary rounded-lg mb-6">
-          <button
-            type="button"
-            onClick={() => setMode("sign_in")}
-            className={`py-2 text-sm rounded-md transition ${mode === "sign_in" ? "bg-card shadow-sm font-medium" : "text-muted-foreground"}`}
-          >
-            Sign in
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("sign_up")}
-            className={`py-2 text-sm rounded-md transition ${mode === "sign_up" ? "bg-card shadow-sm font-medium" : "text-muted-foreground"}`}
-          >
-            Create account
-          </button>
-        </div>
-        <h1 className="text-2xl font-bold mb-1">{mode === "sign_in" ? "Welcome back" : "Create account"}</h1>
+        <h1 className="text-2xl font-bold mb-1">Sign in</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          {mode === "sign_in"
-            ? "Sign in to access inventory and POS."
-            : "Owners see the full dashboard (sales & profit). Pharmacists only access inventory and POS."}
+          Pharmacist accounts are created by the pharmacy owner. Ask the owner for your login credentials.
         </p>
         <form onSubmit={submit} className="space-y-4">
           <div>
             <Label htmlFor="email" className="text-xs">Email</Label>
-            <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
+            <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@pharmacy.com" />
           </div>
           <div>
-            <Label htmlFor="pw" className="text-xs">Password (min 6 characters)</Label>
-            <Input id="pw" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+            <Label htmlFor="pw" className="text-xs">Password</Label>
+            <Input id="pw" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
           </div>
-          {mode === "sign_up" && (
-            <div>
-              <Label className="text-xs mb-1.5 block">I am a</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {(["owner", "pharmacist"] as Role[]).map((r) => (
-                  <button
-                    type="button"
-                    key={r}
-                    onClick={() => setRole(r)}
-                    className={`py-2.5 text-sm rounded-md border transition capitalize ${role === r ? "bg-primary text-primary-foreground border-primary" : "bg-card text-foreground border-border hover:bg-secondary"}`}
-                  >
-                    {r}
-                  </button>
-                ))}
-              </div>
-              <p className="text-[11px] text-muted-foreground mt-1.5">
-                {role === "owner" ? "Full access including dashboard with revenue & profit." : "Inventory and POS only — no profit/revenue dashboard."}
-              </p>
-            </div>
-          )}
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Please wait…" : mode === "sign_in" ? "Sign in" : "Create account"}
+            {loading ? "Please wait…" : "Sign in"}
           </Button>
         </form>
       </Card>
