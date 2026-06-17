@@ -28,10 +28,11 @@ function AuthPage() {
     const userEmail = u.user?.email;
     if (!uid) return;
     let { data } = await supabase.from("user_roles").select("role").eq("user_id", uid).maybeSingle();
-    // Bootstrap: auto-grant owner role to the designated owner email on first login.
+    // Controlled bootstrap: the server-side function will only grant owner if the
+    // authenticated user's email matches the designated owner email.
     if (!data && userEmail === OWNER_EMAIL) {
-      await supabase.from("user_roles").insert({ user_id: uid, role: "owner" });
-      data = { role: "owner" };
+      const { data: r } = await supabase.rpc("bootstrap_owner_role");
+      if (r) data = { role: r };
     }
     const r = data?.role as Role | undefined;
     if (!r) {
