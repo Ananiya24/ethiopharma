@@ -47,6 +47,8 @@
   --accent-foreground: oklch(0.2 0.04 60);
   --border: oklch(0.9 0.015 190);
   --ring: oklch(0.55 0.13 180);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.04 200);
 
   --gradient-hero: linear-gradient(135deg, oklch(0.55 0.13 180) 0%, oklch(0.72 0.14 175) 100%);
   --gradient-soft: linear-gradient(180deg, oklch(0.99 0.005 180) 0%, oklch(0.95 0.03 180) 100%);
