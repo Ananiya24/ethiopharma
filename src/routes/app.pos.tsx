@@ -170,8 +170,7 @@ function POSPage() {
               <SelectContent>
                 <SelectItem value="cash">Cash</SelectItem>
                 <SelectItem value="telebirr">Telebirr</SelectItem>
-                <SelectItem value="cbe_birr">CBE Birr</SelectItem>
-                <SelectItem value="card">Card</SelectItem>
+                <SelectItem value="cbe">CBE</SelectItem>
               </SelectContent>
             </Select>
           </div>
