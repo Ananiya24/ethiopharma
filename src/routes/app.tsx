@@ -64,7 +64,11 @@ function AppLayout() {
           <Link to="/" className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-secondary">
             <Home className="size-3.5" /> Back to website
           </Link>
+          <div className="px-3 pt-2 text-[10px] text-muted-foreground">
+            Made with <span className="font-semibold text-foreground">Zylos Tech</span>
+          </div>
         </div>
+
       </aside>
       {/* Mobile top nav */}
       <div className={`md:hidden fixed bottom-0 inset-x-0 z-50 bg-card border-t border-border grid`} style={{ gridTemplateColumns: `repeat(${nav.length}, minmax(0, 1fr))` }}>
