@@ -96,6 +96,10 @@ function AuthPage() {
           </Button>
         </form>
       </Card>
+      <p className="mt-6 text-xs text-muted-foreground">
+        Made with <span className="font-semibold text-foreground">Zylos Tech</span>
+      </p>
     </div>
+
   );
 }
