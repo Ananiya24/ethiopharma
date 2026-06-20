@@ -67,7 +67,7 @@ function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen grid place-items-center p-4" style={{ background: "var(--gradient-soft)" }}>
+    <div className="min-h-screen flex flex-col items-center justify-center gap-6 p-4 py-10" style={{ background: "var(--gradient-soft)" }}>
       <Card className="w-full max-w-md p-8">
         <div className="flex items-center gap-2 mb-6">
           <span className="size-10 rounded-lg grid place-items-center text-primary-foreground" style={{ background: "var(--gradient-hero)" }}>
@@ -95,11 +95,16 @@ function AuthPage() {
             {loading ? "Please wait…" : "Sign in"}
           </Button>
         </form>
+        <div className="mt-6 pt-4 border-t border-border flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          <span className="size-1.5 rounded-full bg-primary" />
+          Designed & built by <span className="font-semibold text-foreground tracking-tight">Zylos Tech</span>
+        </div>
       </Card>
-      <p className="mt-6 text-xs text-muted-foreground">
-        Made with <span className="font-semibold text-foreground">Zylos Tech</span>
-      </p>
+      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur border border-border shadow-sm text-xs text-muted-foreground">
+        <span className="size-1.5 rounded-full bg-primary animate-pulse" />
+        A product crafted by <span className="font-bold text-foreground tracking-tight">Zylos Tech</span>
+      </div>
     </div>
-
   );
 }
+
