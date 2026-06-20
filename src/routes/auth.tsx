@@ -100,10 +100,6 @@ function AuthPage() {
           Designed & built by <span className="font-semibold text-foreground tracking-tight">Zylos Tech</span>
         </div>
       </Card>
-      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-card/80 backdrop-blur border border-border shadow-sm text-xs text-muted-foreground">
-        <span className="size-1.5 rounded-full bg-primary animate-pulse" />
-        A product crafted by <span className="font-bold text-foreground tracking-tight">Zylos Tech</span>
-      </div>
     </div>
   );
 }
