@@ -22,12 +22,13 @@ export const createPharmacist = createServerFn({ method: "POST" })
     // Verify caller is owner
     const { data: roleRow, error: roleErr } = await context.supabase
       .from("user_roles")
-      .select("role")
+      .select("role, pharmacy_id")
       .eq("user_id", context.userId)
       .eq("role", "owner")
       .maybeSingle();
     if (roleErr) throw new Error(roleErr.message);
     if (!roleRow) throw new Error("Forbidden: only the owner can create accounts");
+    const pharmacyId = roleRow.pharmacy_id;
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -42,7 +43,7 @@ export const createPharmacist = createServerFn({ method: "POST" })
 
     const { error: insertErr } = await supabaseAdmin
       .from("user_roles")
-      .insert({ user_id: newUserId, role: "pharmacist" });
+      .insert({ user_id: newUserId, role: "pharmacist", pharmacy_id: pharmacyId });
     if (insertErr) {
       // Rollback the auth user if role insert fails
       await supabaseAdmin.auth.admin.deleteUser(newUserId);
@@ -56,7 +57,7 @@ export const listStaff = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data: roleRow } = await context.supabase
       .from("user_roles")
-      .select("role")
+      .select("role, pharmacy_id")
       .eq("user_id", context.userId)
       .eq("role", "owner")
       .maybeSingle();
@@ -66,6 +67,7 @@ export const listStaff = createServerFn({ method: "GET" })
     const { data: roles, error } = await supabaseAdmin
       .from("user_roles")
       .select("user_id, role, created_at")
+      .eq("pharmacy_id", roleRow.pharmacy_id)
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
 
@@ -93,7 +95,7 @@ export const deletePharmacist = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: roleRow } = await context.supabase
       .from("user_roles")
-      .select("role")
+      .select("role, pharmacy_id")
       .eq("user_id", context.userId)
       .eq("role", "owner")
       .maybeSingle();
@@ -104,10 +106,13 @@ export const deletePharmacist = createServerFn({ method: "POST" })
     // Block deleting another owner
     const { data: target } = await supabaseAdmin
       .from("user_roles")
-      .select("role")
+      .select("role, pharmacy_id")
       .eq("user_id", data.user_id)
       .maybeSingle();
-    if (target?.role === "owner") throw new Error("Cannot delete an owner account");
+    if (!target || target.pharmacy_id !== roleRow.pharmacy_id) {
+      throw new Error("That account does not belong to your pharmacy");
+    }
+    if (target.role === "owner") throw new Error("Cannot delete an owner account");
 
     const { error: delErr } = await supabaseAdmin.auth.admin.deleteUser(data.user_id);
     if (delErr) throw new Error(delErr.message);

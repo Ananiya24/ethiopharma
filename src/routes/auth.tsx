@@ -14,31 +14,23 @@ export const Route = createFileRoute("/auth")({
 });
 
 type Role = "owner" | "pharmacist";
-const OWNER_EMAIL = "owner@pharmacy.com";
 
 function AuthPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
 
   async function routeAfterLogin() {
     const { data: u } = await supabase.auth.getUser();
     const uid = u.user?.id;
-    const userEmail = u.user?.email;
     if (!uid) return;
-    let { data } = await supabase.from("user_roles").select("role").eq("user_id", uid).maybeSingle();
-    // Controlled bootstrap: the server-side function will only grant owner if the
-    // authenticated user's email matches the designated owner email.
-    if (!data && userEmail === OWNER_EMAIL) {
-      const { data: r } = await supabase.rpc("bootstrap_owner_role");
-      if (r) data = { role: r };
-    }
+    const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid).maybeSingle();
     const r = data?.role as Role | undefined;
     if (!r) {
-      // No role assigned — sign them out, account must be created by the owner.
-      await supabase.auth.signOut();
-      toast.error("This account has no role assigned. Ask the owner to create your account.");
+      // No pharmacy yet — send them through pharmacy setup (they become its owner).
+      navigate({ to: "/app/onboarding", replace: true });
       return;
     }
     navigate({ to: r === "pharmacist" ? "/app/pos" : "/app/dashboard", replace: true });
@@ -57,10 +49,20 @@ function AuthPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/app` },
+        });
+        if (error) throw error;
+        toast.success("Account created. Set up your pharmacy next.");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      }
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Sign in failed");
+      toast.error(e instanceof Error ? e.message : "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -78,9 +80,11 @@ function AuthPage() {
             <div className="text-xs text-muted-foreground">for Pharmacy</div>
           </div>
         </div>
-        <h1 className="text-2xl font-bold mb-1">Sign in</h1>
+        <h1 className="text-2xl font-bold mb-1">{mode === "signup" ? "Register your pharmacy" : "Sign in"}</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          Pharmacist accounts are created by the pharmacy owner. Ask the owner for your login credentials.
+          {mode === "signup"
+            ? "Create an owner account, then name your pharmacy. Your data stays private to your pharmacy."
+            : "Pharmacist accounts are created by the pharmacy owner. Ask the owner for your login credentials."}
         </p>
         <form onSubmit={submit} className="space-y-4">
           <div>
@@ -92,8 +96,15 @@ function AuthPage() {
             <Input id="pw" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Please wait…" : "Sign in"}
+            {loading ? "Please wait…" : mode === "signup" ? "Create owner account" : "Sign in"}
           </Button>
+          <button
+            type="button"
+            className="w-full text-xs text-muted-foreground hover:text-foreground"
+            onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
+          >
+            {mode === "signup" ? "Already have an account? Sign in" : "New pharmacy? Register here"}
+          </button>
         </form>
         <div className="mt-6 pt-4 border-t border-border flex items-center justify-center gap-2 text-xs text-muted-foreground">
           <span className="size-1.5 rounded-full bg-primary" />
