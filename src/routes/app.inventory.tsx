@@ -156,7 +156,12 @@ function InventoryPage() {
         await logActivity("update", editing.id, payload.name, { changes });
         toast.success("Medicine updated");
       } else {
-        const { data, error } = await supabase.from("medicines").insert(payload).select("id").single();
+        if (!pharmacyId) throw new Error("No pharmacy assigned to your account");
+        const { data, error } = await supabase
+          .from("medicines")
+          .insert({ ...payload, pharmacy_id: pharmacyId })
+          .select("id")
+          .single();
         if (error) throw error;
         await logActivity("create", data?.id ?? null, payload.name, { values: payload as Record<string, unknown> });
         toast.success("Medicine added");
