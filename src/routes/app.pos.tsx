@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Plus, Minus, Trash2, ShoppingCart, Receipt, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { useRole } from "@/hooks/use-role";
 
 export const Route = createFileRoute("/app/pos")({
   head: () => ({ meta: [{ title: "POS — Inventory Management" }] }),
@@ -20,6 +21,7 @@ type Medicine = {
 type CartItem = { medicine: Medicine; qty: number };
 
 function POSPage() {
+  const { pharmacyId } = useRole();
   const [meds, setMeds] = useState<Medicine[]>([]);
   const [q, setQ] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -66,15 +68,17 @@ function POSPage() {
     if (cart.length === 0) return;
     setProcessing(true);
     try {
+      if (!pharmacyId) throw new Error("No pharmacy assigned to your account");
       const saleNumber = `S-${Date.now().toString().slice(-8)}`;
       const { data: sale, error: saleErr } = await supabase
         .from("sales")
-        .insert({ sale_number: saleNumber, total_amount: total, payment_method: payment, cashier_name: cashier || null })
+        .insert({ sale_number: saleNumber, total_amount: total, payment_method: payment, cashier_name: cashier || null, pharmacy_id: pharmacyId })
         .select().single();
       if (saleErr || !sale) throw saleErr ?? new Error("Sale failed");
 
       const items = cart.map((i) => ({
         sale_id: sale.id,
+        pharmacy_id: pharmacyId,
         medicine_id: i.medicine.id,
         medicine_name: i.medicine.name,
         quantity: i.qty,
