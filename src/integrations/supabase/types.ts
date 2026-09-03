@@ -147,6 +147,35 @@ export type Database = {
         }
         Relationships: []
       }
+      pharmacy_counters: {
+        Row: {
+          created_at: string
+          last_sale_number: number
+          pharmacy_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          last_sale_number?: number
+          pharmacy_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          last_sale_number?: number
+          pharmacy_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pharmacy_counters_pharmacy_id_fkey"
+            columns: ["pharmacy_id"]
+            isOneToOne: true
+            referencedRelation: "pharmacies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sale_items: {
         Row: {
           created_at: string
@@ -293,6 +322,10 @@ export type Database = {
         Returns: boolean
       }
       is_pharmacy_owner: { Args: { _pharmacy_id: string }; Returns: boolean }
+      process_sale: {
+        Args: { _cashier_name?: string; _items: Json; _payment_method?: string }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "owner" | "pharmacist"
