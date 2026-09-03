@@ -14,7 +14,6 @@ export const Route = createFileRoute("/auth")({
 });
 
 type Role = "owner" | "pharmacist";
-const OWNER_EMAIL = "owner@pharmacy.com";
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -25,20 +24,12 @@ function AuthPage() {
   async function routeAfterLogin() {
     const { data: u } = await supabase.auth.getUser();
     const uid = u.user?.id;
-    const userEmail = u.user?.email;
     if (!uid) return;
-    let { data } = await supabase.from("user_roles").select("role").eq("user_id", uid).maybeSingle();
-    // Controlled bootstrap: the server-side function will only grant owner if the
-    // authenticated user's email matches the designated owner email.
-    if (!data && userEmail === OWNER_EMAIL) {
-      const { data: r } = await supabase.rpc("bootstrap_owner_role");
-      if (r) data = { role: r };
-    }
+    const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid).maybeSingle();
     const r = data?.role as Role | undefined;
     if (!r) {
-      // No role assigned — sign them out, account must be created by the owner.
-      await supabase.auth.signOut();
-      toast.error("This account has no role assigned. Ask the owner to create your account.");
+      // No pharmacy yet — send them through pharmacy setup (they become its owner).
+      navigate({ to: "/app/onboarding", replace: true });
       return;
     }
     navigate({ to: r === "pharmacist" ? "/app/pos" : "/app/dashboard", replace: true });

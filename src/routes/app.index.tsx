@@ -8,6 +8,7 @@ export const Route = createFileRoute("/app/")({
     if (!uid) throw redirect({ to: "/auth" });
     const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid).maybeSingle();
     const role = data?.role as "owner" | "pharmacist" | undefined;
+    if (!role) throw redirect({ to: "/app/onboarding" });
     throw redirect({ to: role === "pharmacist" ? "/app/pos" : "/app/dashboard" });
   },
   component: () => null,
