@@ -51,7 +51,7 @@ const emptyForm: FormState = {
 };
 
 function InventoryPage() {
-  const { isOwner } = useRole();
+  const { isOwner, pharmacyId } = useRole();
   const [items, setItems] = useState<Medicine[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
@@ -102,13 +102,14 @@ function InventoryPage() {
     details: Record<string, unknown> | null,
   ) {
     const { data: u } = await supabase.auth.getUser();
-    if (!u.user) return;
+    if (!u.user || !pharmacyId) return;
     await supabase.from("medicine_activity_log").insert({
       action,
       medicine_id: medicineId,
       medicine_name: medicineName,
       user_id: u.user.id,
       user_email: u.user.email,
+      pharmacy_id: pharmacyId,
       details: details as never,
     });
   }
