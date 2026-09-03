@@ -20,6 +20,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
 
   async function routeAfterLogin() {
     const { data: u } = await supabase.auth.getUser();
@@ -48,10 +49,20 @@ function AuthPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/app` },
+        });
+        if (error) throw error;
+        toast.success("Account created. Set up your pharmacy next.");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      }
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Sign in failed");
+      toast.error(e instanceof Error ? e.message : "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -69,9 +80,11 @@ function AuthPage() {
             <div className="text-xs text-muted-foreground">for Pharmacy</div>
           </div>
         </div>
-        <h1 className="text-2xl font-bold mb-1">Sign in</h1>
+        <h1 className="text-2xl font-bold mb-1">{mode === "signup" ? "Register your pharmacy" : "Sign in"}</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          Pharmacist accounts are created by the pharmacy owner. Ask the owner for your login credentials.
+          {mode === "signup"
+            ? "Create an owner account, then name your pharmacy. Your data stays private to your pharmacy."
+            : "Pharmacist accounts are created by the pharmacy owner. Ask the owner for your login credentials."}
         </p>
         <form onSubmit={submit} className="space-y-4">
           <div>
@@ -83,8 +96,15 @@ function AuthPage() {
             <Input id="pw" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Please wait…" : "Sign in"}
+            {loading ? "Please wait…" : mode === "signup" ? "Create owner account" : "Sign in"}
           </Button>
+          <button
+            type="button"
+            className="w-full text-xs text-muted-foreground hover:text-foreground"
+            onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
+          >
+            {mode === "signup" ? "Already have an account? Sign in" : "New pharmacy? Register here"}
+          </button>
         </form>
         <div className="mt-6 pt-4 border-t border-border flex items-center justify-center gap-2 text-xs text-muted-foreground">
           <span className="size-1.5 rounded-full bg-primary" />
