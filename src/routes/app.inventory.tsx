@@ -95,25 +95,6 @@ function InventoryPage() {
     setOpen(true);
   }
 
-  async function logActivity(
-    action: "create" | "update" | "delete",
-    medicineId: string | null,
-    medicineName: string,
-    details: Record<string, unknown> | null,
-  ) {
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user || !pharmacyId) return;
-    await supabase.from("medicine_activity_log").insert({
-      action,
-      medicine_id: medicineId,
-      medicine_name: medicineName,
-      user_id: u.user.id,
-      user_email: u.user.email,
-      pharmacy_id: pharmacyId,
-      details: details as never,
-    });
-  }
-
   async function save() {
     // Required fields
     if (!form.name.trim()) return toast.error("Name is required");
@@ -153,7 +134,6 @@ function InventoryPage() {
         });
         const { error } = await supabase.from("medicines").update(payload).eq("id", editing.id);
         if (error) throw error;
-        await logActivity("update", editing.id, payload.name, { changes });
         toast.success("Medicine updated");
       } else {
         if (!pharmacyId) throw new Error("No pharmacy assigned to your account");
@@ -163,7 +143,6 @@ function InventoryPage() {
           .select("id")
           .single();
         if (error) throw error;
-        await logActivity("create", data?.id ?? null, payload.name, { values: payload as Record<string, unknown> });
         toast.success("Medicine added");
       }
       setOpen(false);
@@ -179,7 +158,6 @@ function InventoryPage() {
     if (!confirm(`Delete ${m.name}?`)) return;
     const { error } = await supabase.from("medicines").delete().eq("id", m.id);
     if (error) return toast.error(error.message);
-    await logActivity("delete", m.id, m.name, null);
     toast.success("Deleted");
     load();
   }
