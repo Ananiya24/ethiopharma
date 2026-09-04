@@ -126,22 +126,14 @@ function InventoryPage() {
       };
 
       if (editing) {
-        const changes: Record<string, { from: unknown; to: unknown }> = {};
-        (Object.keys(payload) as Array<keyof typeof payload>).forEach((k) => {
-          const newV = (payload as Record<string, unknown>)[k as string];
-          const oldV = (editing as unknown as Record<string, unknown>)[k as string];
-          if (String(newV ?? "") !== String(oldV ?? "")) changes[k as string] = { from: oldV, to: newV };
-        });
         const { error } = await supabase.from("medicines").update(payload).eq("id", editing.id);
         if (error) throw error;
         toast.success("Medicine updated");
       } else {
         if (!pharmacyId) throw new Error("No pharmacy assigned to your account");
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from("medicines")
-          .insert({ ...payload, pharmacy_id: pharmacyId })
-          .select("id")
-          .single();
+          .insert({ ...payload, pharmacy_id: pharmacyId });
         if (error) throw error;
         toast.success("Medicine added");
       }
