@@ -226,8 +226,20 @@ function InventoryPage() {
                   <Input type="number" step="0.01" inputMode="decimal" value={form.cost_price} onChange={(e) => setForm({ ...form, cost_price: e.target.value })} placeholder="" />
                 </Field>
               )}
-              <Field label="Unit price (ETB) *" className={isOwner ? "" : "col-span-2"}>
-                <Input type="number" step="0.01" inputMode="decimal" value={form.unit_price} onChange={(e) => setForm({ ...form, unit_price: e.target.value })} placeholder="" />
+              <Field
+                label="Unit price (ETB) *"
+                className={isOwner ? "" : "col-span-2"}
+                hint={!isOwner && editing ? "Only the pharmacy owner can change prices." : undefined}
+              >
+                <Input
+                  type="number"
+                  step="0.01"
+                  inputMode="decimal"
+                  value={form.unit_price}
+                  disabled={!isOwner && !!editing}
+                  onChange={(e) => setForm({ ...form, unit_price: e.target.value })}
+                  placeholder=""
+                />
               </Field>
               <Field className="col-span-2" label="Expiry date *">
                 <Input type="date" value={form.expiry_date} onChange={(e) => setForm({ ...form, expiry_date: e.target.value })} />
