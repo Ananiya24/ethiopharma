@@ -95,25 +95,6 @@ function InventoryPage() {
     setOpen(true);
   }
 
-  async function logActivity(
-    action: "create" | "update" | "delete",
-    medicineId: string | null,
-    medicineName: string,
-    details: Record<string, unknown> | null,
-  ) {
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user || !pharmacyId) return;
-    await supabase.from("medicine_activity_log").insert({
-      action,
-      medicine_id: medicineId,
-      medicine_name: medicineName,
-      user_id: u.user.id,
-      user_email: u.user.email,
-      pharmacy_id: pharmacyId,
-      details: details as never,
-    });
-  }
-
   async function save() {
     // Required fields
     if (!form.name.trim()) return toast.error("Name is required");
@@ -145,25 +126,15 @@ function InventoryPage() {
       };
 
       if (editing) {
-        const changes: Record<string, { from: unknown; to: unknown }> = {};
-        (Object.keys(payload) as Array<keyof typeof payload>).forEach((k) => {
-          const newV = (payload as Record<string, unknown>)[k as string];
-          const oldV = (editing as unknown as Record<string, unknown>)[k as string];
-          if (String(newV ?? "") !== String(oldV ?? "")) changes[k as string] = { from: oldV, to: newV };
-        });
         const { error } = await supabase.from("medicines").update(payload).eq("id", editing.id);
         if (error) throw error;
-        await logActivity("update", editing.id, payload.name, { changes });
         toast.success("Medicine updated");
       } else {
         if (!pharmacyId) throw new Error("No pharmacy assigned to your account");
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from("medicines")
-          .insert({ ...payload, pharmacy_id: pharmacyId })
-          .select("id")
-          .single();
+          .insert({ ...payload, pharmacy_id: pharmacyId });
         if (error) throw error;
-        await logActivity("create", data?.id ?? null, payload.name, { values: payload as Record<string, unknown> });
         toast.success("Medicine added");
       }
       setOpen(false);
@@ -179,7 +150,6 @@ function InventoryPage() {
     if (!confirm(`Delete ${m.name}?`)) return;
     const { error } = await supabase.from("medicines").delete().eq("id", m.id);
     if (error) return toast.error(error.message);
-    await logActivity("delete", m.id, m.name, null);
     toast.success("Deleted");
     load();
   }
@@ -256,8 +226,20 @@ function InventoryPage() {
                   <Input type="number" step="0.01" inputMode="decimal" value={form.cost_price} onChange={(e) => setForm({ ...form, cost_price: e.target.value })} placeholder="" />
                 </Field>
               )}
-              <Field label="Unit price (ETB) *" className={isOwner ? "" : "col-span-2"}>
-                <Input type="number" step="0.01" inputMode="decimal" value={form.unit_price} onChange={(e) => setForm({ ...form, unit_price: e.target.value })} placeholder="" />
+              <Field
+                label="Unit price (ETB) *"
+                className={isOwner ? "" : "col-span-2"}
+                hint={!isOwner && editing ? "Only the pharmacy owner can change prices." : undefined}
+              >
+                <Input
+                  type="number"
+                  step="0.01"
+                  inputMode="decimal"
+                  value={form.unit_price}
+                  disabled={!isOwner && !!editing}
+                  onChange={(e) => setForm({ ...form, unit_price: e.target.value })}
+                  placeholder=""
+                />
               </Field>
               <Field className="col-span-2" label="Expiry date *">
                 <Input type="date" value={form.expiry_date} onChange={(e) => setForm({ ...form, expiry_date: e.target.value })} />
