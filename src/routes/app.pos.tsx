@@ -69,31 +69,21 @@ function POSPage() {
     setProcessing(true);
     try {
       if (!pharmacyId) throw new Error("No pharmacy assigned to your account");
-      const saleNumber = `S-${Date.now().toString().slice(-8)}`;
-      const { data: sale, error: saleErr } = await supabase
-        .from("sales")
-        .insert({ sale_number: saleNumber, total_amount: total, payment_method: payment, cashier_name: cashier || null, pharmacy_id: pharmacyId })
-        .select().single();
-      if (saleErr || !sale) throw saleErr ?? new Error("Sale failed");
 
       const items = cart.map((i) => ({
-        sale_id: sale.id,
-        pharmacy_id: pharmacyId,
         medicine_id: i.medicine.id,
-        medicine_name: i.medicine.name,
         quantity: i.qty,
-        unit_price: Number(i.medicine.unit_price),
-        subtotal: i.qty * Number(i.medicine.unit_price),
       }));
-      const { error: itemsErr } = await supabase.from("sale_items").insert(items);
-      if (itemsErr) throw itemsErr;
 
-      // Decrement stock
-      await Promise.all(cart.map((i) =>
-        supabase.from("medicines").update({ quantity: i.medicine.quantity - i.qty }).eq("id", i.medicine.id)
-      ));
+      const { data, error } = await supabase.rpc("process_sale", {
+        _items: items,
+        _payment_method: payment,
+        _cashier_name: cashier || undefined,
+      });
+      if (error) throw error;
 
-      setLastReceipt({ saleNumber, total, items: [...cart] });
+      const result = data as { sale_number: string; total_amount: number };
+      setLastReceipt({ saleNumber: result.sale_number, total: result.total_amount, items: [...cart] });
       setCart([]);
       setCashier("");
       load();
