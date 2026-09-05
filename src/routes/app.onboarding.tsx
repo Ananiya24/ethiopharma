@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/app/onboarding")({
 });
 
 function OnboardingPage() {
-  const navigate = useNavigate();
+  
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
 
