@@ -20,87 +20,35 @@ export const Route = createFileRoute("/app/dashboard")({
   component: DashboardPage,
 });
 
-type Sale = { id: string; total_amount: number; payment_method: string; created_at: string };
-type SaleItem = { medicine_name: string; quantity: number; subtotal: number; unit_price: number; medicine_id: string | null; created_at: string };
-type Medicine = { id: string; name: string; quantity: number; cost_price: number; unit_price: number; reorder_level: number; expiry_date: string | null };
+type Stats = {
+  today_revenue: number; today_count: number;
+  week_revenue: number; week_count: number;
+  month_revenue: number; today_profit: number; month_profit: number;
+  inventory_value: number; medicine_count: number;
+  chart: { day: string; sales: number }[];
+  payments: { method: string; amount: number }[];
+  top_sellers: { name: string; qty: number; revenue: number }[];
+  low_stock_count: number;
+  low_stock: { id: string; name: string; quantity: number; reorder_level: number }[];
+  expiring_count: number;
+  expiring: { id: string; name: string; expiry_date: string }[];
+};
 
-function startOfToday() { const d = new Date(); d.setHours(0,0,0,0); return d; }
-function daysAgo(n: number) { const d = startOfToday(); d.setDate(d.getDate() - n); return d; }
-const ETB = (n: number) => `ETB ${n.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+const ETB = (n: number) => `ETB ${Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
 
 function DashboardPage() {
-  const [sales, setSales] = useState<Sale[]>([]);
-  const [items, setItems] = useState<SaleItem[]>([]);
-  const [meds, setMeds] = useState<Medicine[]>([]);
+  const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const since = daysAgo(29).toISOString();
-      const [s, i, m] = await Promise.all([
-        supabase.from("sales").select("id,total_amount,payment_method,created_at").gte("created_at", since).order("created_at", { ascending: false }),
-        supabase.from("sale_items").select("medicine_name,quantity,subtotal,unit_price,medicine_id,created_at").gte("created_at", since),
-        supabase.from("medicines").select("id,name,quantity,cost_price,unit_price,reorder_level,expiry_date"),
-      ]);
-      setSales((s.data as Sale[]) ?? []);
-      setItems((i.data as SaleItem[]) ?? []);
-      setMeds((m.data as Medicine[]) ?? []);
+      const { data } = await supabase.rpc("dashboard_stats");
+      setStats((data as unknown as Stats) ?? null);
       setLoading(false);
     })();
   }, []);
 
-  const today = startOfToday();
-  const weekStart = daysAgo(6);
-  const monthStart = daysAgo(29);
-
-  const inRange = (iso: string, from: Date) => new Date(iso) >= from;
-
-  const todaySales = sales.filter(s => inRange(s.created_at, today));
-  const weekSales = sales.filter(s => inRange(s.created_at, weekStart));
-  const monthSales = sales.filter(s => inRange(s.created_at, monthStart));
-
-  const sum = (arr: Sale[]) => arr.reduce((a, s) => a + Number(s.total_amount), 0);
-  const todayRevenue = sum(todaySales);
-  const weekRevenue = sum(weekSales);
-  const monthRevenue = sum(monthSales);
-
-  // Profit = sum((unit_price - cost_price) * qty) per sale_item using current med cost as approximation
-  const costMap = new Map(meds.map(m => [m.id, Number(m.cost_price)]));
-  const profitFor = (it: SaleItem) => {
-    const cost = it.medicine_id ? (costMap.get(it.medicine_id) ?? 0) : 0;
-    return (Number(it.unit_price) - cost) * it.quantity;
-  };
-  const todayProfit = items.filter(i => inRange(i.created_at, today)).reduce((a, i) => a + profitFor(i), 0);
-  const monthProfit = items.filter(i => inRange(i.created_at, monthStart)).reduce((a, i) => a + profitFor(i), 0);
-
-  // 7-day chart
-  const chart = Array.from({ length: 7 }, (_, idx) => {
-    const day = daysAgo(6 - idx);
-    const next = new Date(day); next.setDate(day.getDate() + 1);
-    const label = day.toLocaleDateString(undefined, { weekday: "short" });
-    const total = sales.filter(s => { const d = new Date(s.created_at); return d >= day && d < next; }).reduce((a, s) => a + Number(s.total_amount), 0);
-    return { day: label, sales: Math.round(total) };
-  });
-
-  // Top sellers (30d)
-  const topMap = new Map<string, { name: string; qty: number; revenue: number }>();
-  items.forEach(it => {
-    const e = topMap.get(it.medicine_name) ?? { name: it.medicine_name, qty: 0, revenue: 0 };
-    e.qty += it.quantity; e.revenue += Number(it.subtotal);
-    topMap.set(it.medicine_name, e);
-  });
-  const topSellers = [...topMap.values()].sort((a, b) => b.qty - a.qty).slice(0, 5);
-
-  // Payment breakdown today
-  const payMap = new Map<string, number>();
-  todaySales.forEach(s => payMap.set(s.payment_method, (payMap.get(s.payment_method) ?? 0) + Number(s.total_amount)));
-
-  // Alerts
-  const lowStock = meds.filter(m => m.quantity <= m.reorder_level).sort((a,b) => a.quantity - b.quantity);
-  const in60 = new Date(); in60.setDate(in60.getDate() + 60);
-  const expiringSoon = meds.filter(m => m.expiry_date && new Date(m.expiry_date) <= in60).sort((a,b) => (a.expiry_date ?? "").localeCompare(b.expiry_date ?? ""));
-
-  const inventoryValue = meds.reduce((a, m) => a + m.quantity * Number(m.cost_price), 0);
+  const chart = (stats?.chart ?? []).map((c) => ({ day: c.day, sales: Math.round(Number(c.sales)) }));
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
@@ -112,16 +60,16 @@ function DashboardPage() {
         <Button asChild><Link to="/app/pos"><ShoppingCart className="size-4" /> New sale</Link></Button>
       </div>
 
-      {loading ? (
+      {loading || !stats ? (
         <div className="text-muted-foreground">Loading…</div>
       ) : (
         <>
           {/* KPI cards */}
           <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-            <KPI icon={DollarSign} label="Today's revenue" value={ETB(todayRevenue)} sub={`${todaySales.length} sales`} />
-            <KPI icon={TrendingUp} label="Today's profit" value={ETB(todayProfit)} sub="est." />
-            <KPI icon={ShoppingCart} label="7-day revenue" value={ETB(weekRevenue)} sub={`${weekSales.length} sales`} />
-            <KPI icon={Package} label="Inventory value" value={ETB(inventoryValue)} sub={`${meds.length} items`} />
+            <KPI icon={DollarSign} label="Today's revenue" value={ETB(stats.today_revenue)} sub={`${stats.today_count} sales`} />
+            <KPI icon={TrendingUp} label="Today's profit" value={ETB(stats.today_profit)} sub="est." />
+            <KPI icon={ShoppingCart} label="7-day revenue" value={ETB(stats.week_revenue)} sub={`${stats.week_count} sales`} />
+            <KPI icon={Package} label="Inventory value" value={ETB(stats.inventory_value)} sub={`${stats.medicine_count} items`} />
           </div>
 
           {/* Chart + Payments */}
@@ -143,17 +91,17 @@ function DashboardPage() {
             <Card>
               <CardHeader><CardTitle className="text-base">Today by payment</CardTitle></CardHeader>
               <CardContent className="space-y-3">
-                {payMap.size === 0 ? <div className="text-sm text-muted-foreground">No sales yet today.</div> :
-                  [...payMap.entries()].map(([method, amt]) => (
-                    <div key={method} className="flex items-center justify-between text-sm">
-                      <span className="capitalize">{method}</span>
-                      <span className="font-medium">{ETB(amt)}</span>
+                {stats.payments.length === 0 ? <div className="text-sm text-muted-foreground">No sales yet today.</div> :
+                  stats.payments.map((p) => (
+                    <div key={p.method} className="flex items-center justify-between text-sm">
+                      <span className="capitalize">{p.method}</span>
+                      <span className="font-medium">{ETB(p.amount)}</span>
                     </div>
                   ))}
                 <div className="border-t pt-3 flex items-center justify-between font-semibold">
-                  <span>Total</span><span>{ETB(todayRevenue)}</span>
+                  <span>Total</span><span>{ETB(stats.today_revenue)}</span>
                 </div>
-                <div className="text-xs text-muted-foreground">30-day profit: {ETB(monthProfit)} · 30-day revenue: {ETB(monthRevenue)}</div>
+                <div className="text-xs text-muted-foreground">30-day profit: {ETB(stats.month_profit)} · 30-day revenue: {ETB(stats.month_revenue)}</div>
               </CardContent>
             </Card>
           </div>
@@ -163,8 +111,8 @@ function DashboardPage() {
             <Card className="lg:col-span-1">
               <CardHeader><CardTitle className="text-base">Top sellers (30d)</CardTitle></CardHeader>
               <CardContent className="space-y-2">
-                {topSellers.length === 0 ? <div className="text-sm text-muted-foreground">No sales yet.</div> :
-                  topSellers.map(t => (
+                {stats.top_sellers.length === 0 ? <div className="text-sm text-muted-foreground">No sales yet.</div> :
+                  stats.top_sellers.map((t) => (
                     <div key={t.name} className="flex items-center justify-between text-sm">
                       <span className="truncate pr-2">{t.name}</span>
                       <span className="text-muted-foreground">{t.qty} · {ETB(t.revenue)}</span>
@@ -176,11 +124,11 @@ function DashboardPage() {
             <Card>
               <CardHeader className="flex-row items-center justify-between">
                 <CardTitle className="text-base flex items-center gap-2"><AlertTriangle className="size-4 text-destructive" /> Low stock</CardTitle>
-                <Badge variant="destructive">{lowStock.length}</Badge>
+                <Badge variant="destructive">{stats.low_stock_count}</Badge>
               </CardHeader>
               <CardContent className="space-y-2">
-                {lowStock.length === 0 ? <div className="text-sm text-muted-foreground">All stocked up.</div> :
-                  lowStock.slice(0, 6).map(m => (
+                {stats.low_stock.length === 0 ? <div className="text-sm text-muted-foreground">All stocked up.</div> :
+                  stats.low_stock.map((m) => (
                     <div key={m.id} className="flex items-center justify-between text-sm">
                       <span className="truncate pr-2">{m.name}</span>
                       <span className="text-muted-foreground">{m.quantity} / {m.reorder_level}</span>
@@ -193,11 +141,11 @@ function DashboardPage() {
             <Card>
               <CardHeader className="flex-row items-center justify-between">
                 <CardTitle className="text-base flex items-center gap-2"><CalendarClock className="size-4" /> Expiring ≤ 60d</CardTitle>
-                <Badge variant="secondary">{expiringSoon.length}</Badge>
+                <Badge variant="secondary">{stats.expiring_count}</Badge>
               </CardHeader>
               <CardContent className="space-y-2">
-                {expiringSoon.length === 0 ? <div className="text-sm text-muted-foreground">Nothing expiring soon.</div> :
-                  expiringSoon.slice(0, 6).map(m => (
+                {stats.expiring.length === 0 ? <div className="text-sm text-muted-foreground">Nothing expiring soon.</div> :
+                  stats.expiring.map((m) => (
                     <div key={m.id} className="flex items-center justify-between text-sm">
                       <span className="truncate pr-2">{m.name}</span>
                       <span className="text-muted-foreground">{m.expiry_date}</span>
