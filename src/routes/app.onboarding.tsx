@@ -42,7 +42,9 @@ function OnboardingPage() {
       const { error } = await supabase.rpc("create_pharmacy_for_current_user", { _name: name.trim() });
       if (error) throw error;
       toast.success("Pharmacy created");
-      navigate({ to: "/app/dashboard", replace: true });
+      // Full reload so the sidebar picks up the new owner role immediately
+      window.location.assign("/app/dashboard");
+      return;
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not create pharmacy");
     } finally {
