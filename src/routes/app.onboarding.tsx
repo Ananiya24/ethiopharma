@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/app/onboarding")({
 });
 
 function OnboardingPage() {
-  const navigate = useNavigate();
+  
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -42,7 +42,9 @@ function OnboardingPage() {
       const { error } = await supabase.rpc("create_pharmacy_for_current_user", { _name: name.trim() });
       if (error) throw error;
       toast.success("Pharmacy created");
-      navigate({ to: "/app/dashboard", replace: true });
+      // Full reload so the sidebar picks up the new owner role immediately
+      window.location.assign("/app/dashboard");
+      return;
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not create pharmacy");
     } finally {

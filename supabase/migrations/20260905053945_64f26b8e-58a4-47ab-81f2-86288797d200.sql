@@ -1,0 +1,2 @@
+ALTER TABLE public.medicine_activity_log DROP CONSTRAINT medicine_activity_log_action_check;
+ALTER TABLE public.medicine_activity_log ADD CONSTRAINT medicine_activity_log_action_check CHECK (action = ANY (ARRAY['create'::text,'update'::text,'delete'::text,'sold'::text]));
