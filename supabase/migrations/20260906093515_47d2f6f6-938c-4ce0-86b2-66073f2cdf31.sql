@@ -1,0 +1,25 @@
+REVOKE EXECUTE ON FUNCTION public.is_platform_admin() FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.subscription_active(uuid) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.admin_list_pharmacies() FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.admin_update_subscription(uuid, text, timestamptz, text, numeric, text) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.admin_record_payment(uuid, numeric, integer, text, text) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.my_subscription() FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.process_sale(jsonb, text, text) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.dashboard_stats() FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.current_pharmacy_id() FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.is_pharmacy_owner(uuid) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.has_role(uuid, app_role) FROM anon, public;
+REVOKE EXECUTE ON FUNCTION public.create_pharmacy_for_current_user(text) FROM anon, public;
+
+GRANT EXECUTE ON FUNCTION public.is_platform_admin() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.subscription_active(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_list_pharmacies() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_update_subscription(uuid, text, timestamptz, text, numeric, text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.admin_record_payment(uuid, numeric, integer, text, text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.my_subscription() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.process_sale(jsonb, text, text) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.dashboard_stats() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.current_pharmacy_id() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.is_pharmacy_owner(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, app_role) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.create_pharmacy_for_current_user(text) TO authenticated;
