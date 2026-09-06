@@ -120,29 +120,44 @@ export type Database = {
       pharmacies: {
         Row: {
           address: string | null
+          admin_notes: string | null
           created_at: string
           id: string
           is_active: boolean
+          monthly_fee: number
           name: string
           phone: string | null
+          plan: string
+          subscription_ends_at: string
+          subscription_status: string
           updated_at: string
         }
         Insert: {
           address?: string | null
+          admin_notes?: string | null
           created_at?: string
           id?: string
           is_active?: boolean
+          monthly_fee?: number
           name: string
           phone?: string | null
+          plan?: string
+          subscription_ends_at?: string
+          subscription_status?: string
           updated_at?: string
         }
         Update: {
           address?: string | null
+          admin_notes?: string | null
           created_at?: string
           id?: string
           is_active?: boolean
+          monthly_fee?: number
           name?: string
           phone?: string | null
+          plan?: string
+          subscription_ends_at?: string
+          subscription_status?: string
           updated_at?: string
         }
         Relationships: []
@@ -175,6 +190,21 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      platform_admins: {
+        Row: {
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       sale_items: {
         Row: {
@@ -272,6 +302,50 @@ export type Database = {
           },
         ]
       }
+      subscription_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          method: string
+          note: string | null
+          period_end: string | null
+          period_start: string | null
+          pharmacy_id: string
+          recorded_by: string | null
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          id?: string
+          method?: string
+          note?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          pharmacy_id: string
+          recorded_by?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          method?: string
+          note?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          pharmacy_id?: string
+          recorded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_payments_pharmacy_id_fkey"
+            columns: ["pharmacy_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -309,6 +383,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_list_pharmacies: { Args: never; Returns: Json }
+      admin_record_payment: {
+        Args: {
+          _amount: number
+          _method?: string
+          _months?: number
+          _note?: string
+          _pharmacy_id: string
+        }
+        Returns: Json
+      }
+      admin_update_subscription: {
+        Args: {
+          _ends_at?: string
+          _monthly_fee?: number
+          _notes?: string
+          _pharmacy_id: string
+          _plan?: string
+          _status?: string
+        }
+        Returns: undefined
+      }
       create_pharmacy_for_current_user: {
         Args: { _name: string }
         Returns: string
@@ -323,10 +419,13 @@ export type Database = {
         Returns: boolean
       }
       is_pharmacy_owner: { Args: { _pharmacy_id: string }; Returns: boolean }
+      is_platform_admin: { Args: never; Returns: boolean }
+      my_subscription: { Args: never; Returns: Json }
       process_sale: {
         Args: { _cashier_name?: string; _items: Json; _payment_method?: string }
         Returns: Json
       }
+      subscription_active: { Args: { _pharmacy_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "owner" | "pharmacist"
