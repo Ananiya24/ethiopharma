@@ -1,9 +1,9 @@
 import { createFileRoute, Link, Outlet, useLocation, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Pill, Boxes, ShoppingCart, Home, LogOut, LayoutDashboard, Users, Activity } from "lucide-react";
+import { Pill, Boxes, ShoppingCart, Home, LogOut, LayoutDashboard, Users, Activity, Building2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRole } from "@/hooks/use-role";
+import { useRole, useSubscription } from "@/hooks/use-role";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
@@ -17,7 +17,8 @@ function AppLayout() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [email, setEmail] = useState<string | null>(null);
-  const { isOwner, role } = useRole();
+  const { isOwner, role, isPlatformAdmin } = useRole();
+  const { subscription } = useSubscription();
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null));
   }, []);
@@ -31,8 +32,17 @@ function AppLayout() {
     { to: "/app/pos", label: "POS", icon: ShoppingCart, ownerOnly: false },
     { to: "/app/staff", label: "Staff", icon: Users, ownerOnly: true },
     { to: "/app/activity", label: "Activity", icon: Activity, ownerOnly: true },
+    { to: "/app/admin", label: "Pharmacies", icon: Building2, ownerOnly: false, adminOnly: true },
   ] as const;
-  const nav = allNav.filter((n) => !n.ownerOnly || isOwner);
+  const nav = allNav.filter((n) => (!n.ownerOnly || isOwner) && (!("adminOnly" in n && n.adminOnly) || isPlatformAdmin));
+  const expiry =
+    subscription && !isPlatformAdmin
+      ? !subscription.active
+        ? { tone: "destructive" as const, text: "Your subscription has ended. Selling is disabled — please contact your provider to renew." }
+        : subscription.days_left <= 7
+          ? { tone: "warning" as const, text: `Your subscription ends in ${subscription.days_left} day${subscription.days_left === 1 ? "" : "s"}. Contact your provider to renew.` }
+          : null
+      : null;
   return (
     <div className="min-h-screen flex bg-secondary/30">
       <aside className="w-60 border-r border-border bg-card hidden md:flex flex-col">
@@ -83,6 +93,18 @@ function AppLayout() {
         })}
       </div>
       <main className="flex-1 min-w-0 pb-20 md:pb-0">
+        {expiry && (
+          <div
+            className={`flex items-start gap-2 px-4 py-3 text-sm ${
+              expiry.tone === "destructive"
+                ? "bg-destructive/10 text-destructive"
+                : "bg-amber-500/10 text-amber-700 dark:text-amber-500"
+            }`}
+          >
+            <AlertTriangle className="size-4 mt-0.5 shrink-0" />
+            <span>{expiry.text}</span>
+          </div>
+        )}
         <Outlet />
       </main>
     </div>

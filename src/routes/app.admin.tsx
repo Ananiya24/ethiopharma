@@ -86,7 +86,7 @@ function AdminPage() {
       _amount: Number(amount || payFor.monthly_fee || 0),
       _months: Math.max(1, Number(months || 1)),
       _method: "cash",
-      _note: note || null,
+      _note: note || undefined,
     });
     setSaving(false);
     if (error) return toast.error(error.message);
@@ -206,7 +206,6 @@ function AdminPage() {
             <Button variant="ghost" onClick={() => setPayFor(null)}>Cancel</Button>
             <Button onClick={recordPayment} disabled={saving}>{saving ? "Saving…" : "Save payment"}</Button>
           </DialogFooter>
-        </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
