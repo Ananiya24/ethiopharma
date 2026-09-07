@@ -17,7 +17,8 @@ function AppLayout() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [email, setEmail] = useState<string | null>(null);
-  const { isOwner, role } = useRole();
+  const { isOwner, role, isPlatformAdmin } = useRole();
+  const { subscription } = useSubscription();
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null));
   }, []);
