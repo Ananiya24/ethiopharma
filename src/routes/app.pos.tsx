@@ -140,7 +140,7 @@ function POSPage() {
             <div className="text-center text-muted-foreground py-10 text-sm">Cart is empty</div>
           )}
           {cart.map((i) => (
-            <div key={i.medicine.id} className="flex items-start gap-2 py-3 border-b border-border last:border-0">
+            <div key={i.medicine.id} className="flex flex-wrap items-center gap-2 py-3 border-b border-border last:border-0">
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-sm truncate">{i.medicine.name}</div>
                 <div className="text-xs text-muted-foreground">ETB {Number(i.medicine.unit_price).toFixed(2)} × {i.qty}</div>
