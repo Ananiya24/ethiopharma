@@ -120,13 +120,13 @@ function AdminPage() {
   const activeCount = (rows ?? []).filter((r) => r.active).length;
 
   return (
-    <div className="p-4 md:p-8 space-y-6">
+    <div className="p-4 md:p-6 lg:p-8 space-y-6">
       <div>
-        <h1 className="text-2xl font-display font-bold">Pharmacies</h1>
+        <h1 className="text-xl sm:text-2xl font-display font-bold">Pharmacies</h1>
         <p className="text-sm text-muted-foreground">Every pharmacy using the software, their subscription and payments.</p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 grid-cols-2 sm:grid-cols-3">
         <Card className="p-4"><div className="text-xs text-muted-foreground">Pharmacies</div><div className="text-2xl font-bold">{rows?.length ?? "—"}</div></Card>
         <Card className="p-4"><div className="text-xs text-muted-foreground">With active access</div><div className="text-2xl font-bold">{rows ? activeCount : "—"}</div></Card>
         <Card className="p-4"><div className="text-xs text-muted-foreground">Monthly recurring</div><div className="text-2xl font-bold">{totalMonthly.toFixed(2)}</div></Card>
@@ -157,11 +157,11 @@ function AdminPage() {
               </div>
 
               <div className="flex flex-wrap items-end gap-2">
-                <div className="w-36">
+                <div className="w-full sm:w-36">
                   <Label className="text-[11px]">Monthly fee</Label>
                   <Input defaultValue={String(r.monthly_fee)} onBlur={(e) => saveFee(r, e.target.value)} />
                 </div>
-                <div className="w-40">
+                <div className="w-full sm:w-40">
                   <Label className="text-[11px]">Status</Label>
                   <Select value={r.subscription_status} onValueChange={(v) => setStatus(r, v as Row["subscription_status"])}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
@@ -173,10 +173,10 @@ function AdminPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button onClick={() => { setPayFor(r); setAmount(String(r.monthly_fee)); }}>
+                <Button className="w-full sm:w-auto" onClick={() => { setPayFor(r); setAmount(String(r.monthly_fee)); }}>
                   <Wallet className="size-4 mr-2" /> Record payment
                 </Button>
-                <span className="text-xs text-muted-foreground ml-auto">Paid to date: {Number(r.paid_total).toFixed(2)}</span>
+                <span className="text-xs text-muted-foreground sm:ml-auto">Paid to date: {Number(r.paid_total).toFixed(2)}</span>
               </div>
             </Card>
           );
@@ -185,7 +185,7 @@ function AdminPage() {
       </div>
 
       <Dialog open={!!payFor} onOpenChange={(o) => !o && setPayFor(null)}>
-        <DialogContent>
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md">
           <DialogHeader><DialogTitle>Record payment — {payFor?.name}</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div>
@@ -202,7 +202,7 @@ function AdminPage() {
             </div>
             <p className="text-xs text-muted-foreground">Access is extended from the current end date and the pharmacy is set to active.</p>
           </div>
-          <DialogFooter>
+          <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">
             <Button variant="ghost" onClick={() => setPayFor(null)}>Cancel</Button>
             <Button onClick={recordPayment} disabled={saving}>{saving ? "Saving…" : "Save payment"}</Button>
           </DialogFooter>

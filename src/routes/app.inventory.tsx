@@ -168,7 +168,7 @@ function InventoryPage() {
   const totalValue = items.reduce((s, m) => s + Number(m.unit_price) * m.quantity, 0);
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">Inventory</h1>
@@ -176,15 +176,15 @@ function InventoryPage() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button onClick={openNew}><Plus className="size-4 mr-1" /> Add Medicine</Button>
+            <Button className="w-full sm:w-auto" onClick={openNew}><Plus className="size-4 mr-1" /> Add Medicine</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-lg max-h-[85vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editing ? "Edit medicine" : "Add medicine"}</DialogTitle>
               <DialogDescription>Fields marked * are required.</DialogDescription>
             </DialogHeader>
-            <div className="grid grid-cols-2 gap-3">
-              <Field className="col-span-2" label="Name *">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Field className="sm:col-span-2" label="Name *">
                 <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Amoxicillin 500mg" />
               </Field>
               <Field label="Brand">
@@ -228,7 +228,7 @@ function InventoryPage() {
               )}
               <Field
                 label="Unit price (ETB) *"
-                className={isOwner ? "" : "col-span-2"}
+                className={isOwner ? "" : "sm:col-span-2"}
                 hint={!isOwner && editing ? "Only the pharmacy owner can change prices." : undefined}
               >
                 <Input
@@ -241,11 +241,11 @@ function InventoryPage() {
                   placeholder=""
                 />
               </Field>
-              <Field className="col-span-2" label="Expiry date *">
+              <Field className="sm:col-span-2" label="Expiry date *">
                 <Input type="date" value={form.expiry_date} onChange={(e) => setForm({ ...form, expiry_date: e.target.value })} />
               </Field>
             </div>
-            <DialogFooter>
+            <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">
               <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
               <Button onClick={save} disabled={saving}>{saving ? "Saving…" : editing ? "Update" : "Add"}</Button>
             </DialogFooter>
@@ -263,12 +263,12 @@ function InventoryPage() {
 
       {/* Search + Category filter */}
       <div className="flex flex-wrap gap-3 mb-4">
-        <div className="relative flex-1 min-w-[200px] max-w-md">
+        <div className="relative flex-1 min-w-0 sm:min-w-[200px] sm:max-w-md">
           <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name, brand, batch…" className="pl-9" />
         </div>
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-[200px]"><SelectValue placeholder="Filter by category" /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-[200px]"><SelectValue placeholder="Filter by category" /></SelectTrigger>
           <SelectContent className="bg-popover">
             <SelectItem value="all">All categories</SelectItem>
             {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
@@ -279,7 +279,7 @@ function InventoryPage() {
       {/* Table */}
       <Card className="overflow-hidden p-0">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[720px]">
             <thead className="bg-secondary/50 text-muted-foreground text-left">
               <tr>
                 <th className="px-4 py-3 font-medium">Medicine</th>

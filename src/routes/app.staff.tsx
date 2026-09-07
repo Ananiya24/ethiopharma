@@ -78,17 +78,17 @@ function StaffPage() {
   }
 
   return (
-    <div className="p-6 lg:p-8 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2"><Users className="size-6" /> Staff accounts</h1>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold flex items-center gap-2"><Users className="size-6 shrink-0" /> Staff accounts</h1>
           <p className="text-sm text-muted-foreground">Create login accounts for your pharmacists. They get inventory + POS access only.</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button><UserPlus className="size-4 mr-1" /> Create pharmacist</Button>
+            <Button className="w-full sm:w-auto"><UserPlus className="size-4 mr-1" /> Create pharmacist</Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md">
             <DialogHeader><DialogTitle>Create pharmacist account</DialogTitle></DialogHeader>
             <form onSubmit={submit} className="space-y-3">
               <div>
@@ -111,7 +111,7 @@ function StaffPage() {
 
       <Card className="overflow-hidden p-0">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[540px]">
             <thead className="bg-secondary/50 text-muted-foreground text-left">
               <tr>
                 <th className="px-4 py-3 font-medium">Email</th>
