@@ -70,7 +70,7 @@ function AuthPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-6 p-4 py-10" style={{ background: "var(--gradient-soft)" }}>
-      <Card className="w-full max-w-md p-8">
+      <Card className="w-full max-w-md p-6 sm:p-8">
         <div className="flex items-center gap-2 mb-6">
           <span className="size-10 rounded-lg grid place-items-center text-primary-foreground" style={{ background: "var(--gradient-hero)" }}>
             <Pill className="size-5" />

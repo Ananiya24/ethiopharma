@@ -54,7 +54,7 @@ function OnboardingPage() {
 
   return (
     <div className="min-h-screen grid place-items-center p-4">
-      <Card className="w-full max-w-md p-8">
+      <Card className="w-full max-w-md p-6 sm:p-8">
         <span className="size-11 rounded-lg grid place-items-center text-primary-foreground mb-4" style={{ background: "var(--gradient-hero)" }}>
           <Building2 className="size-5" />
         </span>
