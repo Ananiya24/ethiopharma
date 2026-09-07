@@ -80,18 +80,21 @@ function AppLayout() {
         </div>
 
       </aside>
-      {/* Mobile top nav */}
-      <div className={`md:hidden fixed bottom-0 inset-x-0 z-50 bg-card border-t border-border grid`} style={{ gridTemplateColumns: `repeat(${nav.length}, minmax(0, 1fr))` }}>
-        {nav.map((n) => {
-          const Icon = n.icon;
-          const active = pathname.startsWith(n.to);
-          return (
-            <Link key={n.to} to={n.to} className={`flex flex-col items-center py-3 text-xs ${active ? "text-primary" : "text-muted-foreground"}`}>
-              <Icon className="size-5 mb-0.5" /> {n.label}
-            </Link>
-          );
-        })}
+      {/* Mobile bottom nav */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-card border-t border-border overflow-x-auto pb-[env(safe-area-inset-bottom)]">
+        <div className="flex min-w-full w-max">
+          {nav.map((n) => {
+            const Icon = n.icon;
+            const active = pathname.startsWith(n.to);
+            return (
+              <Link key={n.to} to={n.to} className={`flex-1 min-w-[72px] flex flex-col items-center gap-0.5 py-2.5 text-[11px] leading-tight ${active ? "text-primary" : "text-muted-foreground"}`}>
+                <Icon className="size-5" /> <span className="truncate max-w-full px-1">{n.label}</span>
+              </Link>
+            );
+          })}
+        </div>
       </div>
+
       <main className="flex-1 min-w-0 pb-20 md:pb-0">
         {expiry && (
           <div
