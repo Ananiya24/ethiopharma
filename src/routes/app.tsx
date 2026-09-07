@@ -93,6 +93,18 @@ function AppLayout() {
         })}
       </div>
       <main className="flex-1 min-w-0 pb-20 md:pb-0">
+        {expiry && (
+          <div
+            className={`flex items-start gap-2 px-4 py-3 text-sm ${
+              expiry.tone === "destructive"
+                ? "bg-destructive/10 text-destructive"
+                : "bg-amber-500/10 text-amber-700 dark:text-amber-500"
+            }`}
+          >
+            <AlertTriangle className="size-4 mt-0.5 shrink-0" />
+            <span>{expiry.text}</span>
+          </div>
+        )}
         <Outlet />
       </main>
     </div>
