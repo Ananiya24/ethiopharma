@@ -1,9 +1,9 @@
 import { createFileRoute, Link, Outlet, useLocation, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Pill, Boxes, ShoppingCart, Home, LogOut, LayoutDashboard, Users, Activity } from "lucide-react";
+import { Pill, Boxes, ShoppingCart, Home, LogOut, LayoutDashboard, Users, Activity, Building2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRole } from "@/hooks/use-role";
+import { useRole, useSubscription } from "@/hooks/use-role";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
