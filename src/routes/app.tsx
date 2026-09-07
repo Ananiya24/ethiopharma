@@ -32,8 +32,17 @@ function AppLayout() {
     { to: "/app/pos", label: "POS", icon: ShoppingCart, ownerOnly: false },
     { to: "/app/staff", label: "Staff", icon: Users, ownerOnly: true },
     { to: "/app/activity", label: "Activity", icon: Activity, ownerOnly: true },
+    { to: "/app/admin", label: "Pharmacies", icon: Building2, ownerOnly: false, adminOnly: true },
   ] as const;
-  const nav = allNav.filter((n) => !n.ownerOnly || isOwner);
+  const nav = allNav.filter((n) => (!n.ownerOnly || isOwner) && (!("adminOnly" in n && n.adminOnly) || isPlatformAdmin));
+  const expiry =
+    subscription && !isPlatformAdmin
+      ? !subscription.active
+        ? { tone: "destructive" as const, text: "Your subscription has ended. Selling is disabled — please contact your provider to renew." }
+        : subscription.days_left <= 7
+          ? { tone: "warning" as const, text: `Your subscription ends in ${subscription.days_left} day${subscription.days_left === 1 ? "" : "s"}. Contact your provider to renew.` }
+          : null
+      : null;
   return (
     <div className="min-h-screen flex bg-secondary/30">
       <aside className="w-60 border-r border-border bg-card hidden md:flex flex-col">
