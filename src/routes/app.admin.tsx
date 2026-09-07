@@ -206,7 +206,6 @@ function AdminPage() {
             <Button variant="ghost" onClick={() => setPayFor(null)}>Cancel</Button>
             <Button onClick={recordPayment} disabled={saving}>{saving ? "Saving…" : "Save payment"}</Button>
           </DialogFooter>
-        </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
