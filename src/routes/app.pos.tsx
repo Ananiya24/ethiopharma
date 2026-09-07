@@ -97,12 +97,12 @@ function POSPage() {
   }
 
   return (
-    <div className="p-4 lg:p-6 grid lg:grid-cols-[1fr_400px] gap-6 max-w-[1600px] mx-auto">
+    <div className="p-3 sm:p-4 lg:p-6 grid lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_400px] gap-4 lg:gap-6 max-w-[1600px] mx-auto">
       {/* Products */}
       <div className="min-w-0">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold">Point of Sale</h1>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Point of Sale</h1>
             <p className="text-sm text-muted-foreground">Tap a medicine to add it to the cart</p>
           </div>
         </div>
@@ -110,15 +110,15 @@ function POSPage() {
           <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search medicines or scan barcode…" className="pl-9 h-11" />
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-3">
           {filtered.map((m) => (
             <button key={m.id} onClick={() => addToCart(m)} className="text-left">
-              <Card className="p-4 hover:border-primary hover:shadow-[var(--shadow-card)] transition-all cursor-pointer h-full">
+              <Card className="p-3 sm:p-4 hover:border-primary hover:shadow-[var(--shadow-card)] transition-all cursor-pointer h-full">
                 <div className="text-xs text-primary font-medium">{m.category ?? "Medicine"}</div>
                 <div className="font-semibold mt-1 line-clamp-2">{m.name}</div>
                 {m.brand && <div className="text-xs text-muted-foreground">{m.brand}</div>}
                 <div className="mt-3 flex items-end justify-between">
-                  <div className="font-bold text-lg">ETB {Number(m.unit_price).toFixed(2)}</div>
+                  <div className="font-bold text-base sm:text-lg">ETB {Number(m.unit_price).toFixed(2)}</div>
                   <div className="text-xs text-muted-foreground">{m.quantity} in stock</div>
                 </div>
               </Card>
@@ -129,7 +129,7 @@ function POSPage() {
       </div>
 
       {/* Cart */}
-      <Card className="p-5 lg:sticky lg:top-4 self-start max-h-[calc(100vh-2rem)] flex flex-col">
+      <Card className="p-4 sm:p-5 lg:sticky lg:top-4 self-start lg:max-h-[calc(100vh-2rem)] flex flex-col">
         <div className="flex items-center gap-2 mb-4">
           <ShoppingCart className="size-5 text-primary" />
           <h2 className="font-bold text-lg">Current Sale</h2>
@@ -140,7 +140,7 @@ function POSPage() {
             <div className="text-center text-muted-foreground py-10 text-sm">Cart is empty</div>
           )}
           {cart.map((i) => (
-            <div key={i.medicine.id} className="flex items-start gap-2 py-3 border-b border-border last:border-0">
+            <div key={i.medicine.id} className="flex flex-wrap items-center gap-2 py-3 border-b border-border last:border-0">
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-sm truncate">{i.medicine.name}</div>
                 <div className="text-xs text-muted-foreground">ETB {Number(i.medicine.unit_price).toFixed(2)} × {i.qty}</div>
@@ -151,13 +151,13 @@ function POSPage() {
                 <Button size="icon" variant="outline" className="size-7" onClick={() => updateQty(i.medicine.id, 1)}><Plus className="size-3" /></Button>
                 <Button size="icon" variant="ghost" className="size-7" onClick={() => removeFromCart(i.medicine.id)}><Trash2 className="size-3 text-destructive" /></Button>
               </div>
-              <div className="font-semibold text-sm w-20 text-right">{(i.qty * Number(i.medicine.unit_price)).toFixed(2)}</div>
+              <div className="font-semibold text-sm w-16 sm:w-20 text-right shrink-0">{(i.qty * Number(i.medicine.unit_price)).toFixed(2)}</div>
             </div>
           ))}
         </div>
 
         <div className="border-t border-border pt-4 mt-2 space-y-3">
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Input placeholder="Cashier name" value={cashier} onChange={(e) => setCashier(e.target.value)} />
             <Select value={payment} onValueChange={setPayment}>
               <SelectTrigger><SelectValue /></SelectTrigger>
@@ -170,7 +170,7 @@ function POSPage() {
           </div>
           <div className="flex items-baseline justify-between">
             <span className="text-muted-foreground">Total</span>
-            <span className="text-3xl font-bold bg-clip-text text-transparent" style={{ backgroundImage: "var(--gradient-hero)" }}>
+            <span className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent" style={{ backgroundImage: "var(--gradient-hero)" }}>
               ETB {total.toFixed(2)}
             </span>
           </div>

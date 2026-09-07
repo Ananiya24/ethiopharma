@@ -51,13 +51,13 @@ function DashboardPage() {
   const chart = (stats?.chart ?? []).map((c) => ({ day: c.day, sales: Math.round(Number(c.sales)) }));
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Overview of sales, profit, stock and alerts</p>
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-6">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold">Dashboard</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">Overview of sales, profit, stock and alerts</p>
         </div>
-        <Button asChild><Link to="/app/pos"><ShoppingCart className="size-4" /> New sale</Link></Button>
+        <Button asChild className="shrink-0"><Link to="/app/pos"><ShoppingCart className="size-4" /> New sale</Link></Button>
       </div>
 
       {loading || !stats ? (
@@ -65,7 +65,7 @@ function DashboardPage() {
       ) : (
         <>
           {/* KPI cards */}
-          <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
             <KPI icon={DollarSign} label="Today's revenue" value={ETB(stats.today_revenue)} sub={`${stats.today_count} sales`} />
             <KPI icon={TrendingUp} label="Today's profit" value={ETB(stats.today_profit)} sub="est." />
             <KPI icon={ShoppingCart} label="7-day revenue" value={ETB(stats.week_revenue)} sub={`${stats.week_count} sales`} />
@@ -73,10 +73,10 @@ function DashboardPage() {
           </div>
 
           {/* Chart + Payments */}
-          <div className="grid gap-4 lg:grid-cols-3">
-            <Card className="lg:col-span-2">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <Card className="md:col-span-2">
               <CardHeader><CardTitle className="text-base">Last 7 days revenue</CardTitle></CardHeader>
-              <CardContent className="h-64">
+              <CardContent className="h-56 sm:h-64 px-2 sm:px-6">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chart}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
@@ -107,7 +107,7 @@ function DashboardPage() {
           </div>
 
           {/* Top sellers + Alerts */}
-          <div className="grid gap-4 lg:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card className="lg:col-span-1">
               <CardHeader><CardTitle className="text-base">Top sellers (30d)</CardTitle></CardHeader>
               <CardContent className="space-y-2">
@@ -163,12 +163,12 @@ function DashboardPage() {
 function KPI({ icon: Icon, label, value, sub }: { icon: any; label: string; value: string; sub?: string }) {
   return (
     <Card>
-      <CardContent className="p-5">
+      <CardContent className="p-4 sm:p-5">
         <div className="flex items-center justify-between">
           <div className="text-xs text-muted-foreground">{label}</div>
           <Icon className="size-4 text-muted-foreground" />
         </div>
-        <div className="text-2xl font-bold mt-2">{value}</div>
+        <div className="text-xl sm:text-2xl font-bold mt-2 break-words">{value}</div>
         {sub && <div className="text-xs text-muted-foreground mt-1">{sub}</div>}
       </CardContent>
     </Card>

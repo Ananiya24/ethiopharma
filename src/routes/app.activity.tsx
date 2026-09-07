@@ -59,14 +59,14 @@ function ActivityPage() {
   }
 
   return (
-    <div className="p-6 lg:p-8 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2"><Activity className="size-6" /> Activity log</h1>
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold flex items-center gap-2"><Activity className="size-6 shrink-0" /> Activity log</h1>
         <p className="text-sm text-muted-foreground">Who added, edited, or deleted medicines.</p>
       </div>
       <Card className="overflow-hidden p-0">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[720px]">
             <thead className="bg-secondary/50 text-muted-foreground text-left">
               <tr>
                 <th className="px-4 py-3 font-medium">When</th>
