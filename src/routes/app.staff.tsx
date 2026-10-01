@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
+import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Badge } from "@/components/ui/badge";
 import { UserPlus, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
-import { createPharmacist, listStaff, deletePharmacist } from "@/lib/staff.functions";
 
 export const Route = createFileRoute("/app/staff")({
   head: () => ({ meta: [{ title: "Staff — Inventory Management" }] }),
@@ -24,12 +23,16 @@ export const Route = createFileRoute("/app/staff")({
   component: StaffPage,
 });
 
-type StaffRow = { user_id: string; email: string; role: "owner" | "pharmacist"; created_at: string };
+type StaffRow = { user_id: string; email: string; role: "owner" | "pharmacist"; created_at: string; confirmed?: boolean };
+
+// Separate client that never stores a session, so signing up a pharmacist doesn't log the owner out.
+function signupClient() {
+  return createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false, storageKey: "staff-signup" },
+  });
+}
 
 function StaffPage() {
-  const list = useServerFn(listStaff);
-  const create = useServerFn(createPharmacist);
-  const remove = useServerFn(deletePharmacist);
 
   const [rows, setRows] = useState<StaffRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,8 +44,9 @@ function StaffPage() {
   async function load() {
     setLoading(true);
     try {
-      const data = await list();
-      setRows(data as StaffRow[]);
+      const { data, error } = await supabase.rpc("owner_list_staff");
+      if (error) throw new Error(error.message);
+      setRows((data as unknown as StaffRow[]) ?? []);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to load staff");
     } finally {
@@ -55,8 +59,17 @@ function StaffPage() {
     e.preventDefault();
     setBusy(true);
     try {
-      await create({ data: { email, password } });
-      toast.success(`Pharmacist account created for ${email}`);
+      const clean = email.trim().toLowerCase();
+      if (password.length < 6) throw new Error("Password must be at least 6 characters");
+      const { data: su, error: suErr } = await signupClient().auth.signUp({
+        email: clean, password, options: { emailRedirectTo: `${window.location.origin}/auth` },
+      });
+      if (suErr) throw new Error(suErr.message);
+      const newId = su.user?.id;
+      if (!newId || (su.user?.identities && su.user.identities.length === 0)) throw new Error("That email is already registered");
+      const { error: rErr } = await supabase.rpc("owner_add_pharmacist", { _user_id: newId, _email: clean });
+      if (rErr) throw new Error(rErr.message);
+      toast.success(`Account created. ${clean} must confirm their email before signing in.`);
       setEmail(""); setPassword(""); setOpen(false);
       load();
     } catch (e) {
@@ -67,10 +80,11 @@ function StaffPage() {
   }
 
   async function onDelete(r: StaffRow) {
-    if (!confirm(`Delete account ${r.email}? This cannot be undone.`)) return;
+    if (!confirm(`Remove ${r.email} from your pharmacy? They will lose access.`)) return;
     try {
-      await remove({ data: { user_id: r.user_id } });
-      toast.success("Account deleted");
+      const { error } = await supabase.rpc("owner_remove_pharmacist", { _user_id: r.user_id });
+      if (error) throw new Error(error.message);
+      toast.success("Access removed");
       load();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to delete");
@@ -98,7 +112,7 @@ function StaffPage() {
               <div>
                 <Label className="text-xs">Temporary password (min 6 chars)</Label>
                 <Input type="text" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Share this with the pharmacist" />
-                <p className="text-[11px] text-muted-foreground mt-1">Give these credentials to your pharmacist. They can sign in immediately.</p>
+                <p className="text-[11px] text-muted-foreground mt-1">The pharmacist gets a confirmation email and can sign in after clicking the link.</p>
               </div>
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
@@ -129,7 +143,7 @@ function StaffPage() {
                   <td className="px-4 py-3">
                     <Badge variant={r.role === "owner" ? "default" : "secondary"} className="capitalize">{r.role}</Badge>
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}{r.confirmed === false && <span className="ml-2 text-xs text-amber-600">awaiting email confirmation</span>}</td>
                   <td className="px-4 py-3 text-right">
                     {r.role !== "owner" && (
                       <Button variant="ghost" size="icon" onClick={() => onDelete(r)}>
