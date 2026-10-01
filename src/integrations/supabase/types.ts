@@ -421,6 +421,15 @@ export type Database = {
       is_pharmacy_owner: { Args: { _pharmacy_id: string }; Returns: boolean }
       is_platform_admin: { Args: never; Returns: boolean }
       my_subscription: { Args: never; Returns: Json }
+      owner_add_pharmacist: {
+        Args: { _email: string; _user_id: string }
+        Returns: undefined
+      }
+      owner_list_staff: { Args: never; Returns: Json }
+      owner_remove_pharmacist: {
+        Args: { _user_id: string }
+        Returns: undefined
+      }
       process_sale: {
         Args: { _cashier_name?: string; _items: Json; _payment_method?: string }
         Returns: Json
