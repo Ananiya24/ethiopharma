@@ -6,7 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Activity } from "lucide-react";
 
 export const Route = createFileRoute("/app/activity")({
-  head: () => ({ meta: [{ title: "Activity log — Inventory Management" }] }),
+  head: () => ({ meta: [
+    { title: "Activity log — Inventory Management" },
+    { name: "description", content: "Review changes to pharmacy medicines and inventory." },
+    { property: "og:title", content: "Activity log — Inventory Management" },
+    { property: "og:description", content: "Review changes to pharmacy medicines and inventory." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   beforeLoad: async () => {
     const { data: userData } = await supabase.auth.getUser();
     const uid = userData.user?.id;

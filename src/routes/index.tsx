@@ -6,6 +6,10 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "Inventory Management for Pharmacy" },
       { name: "description", content: "Inventory management and point of sale system for pharmacies." },
+      { property: "og:title", content: "Inventory Management for Pharmacy" },
+      { property: "og:description", content: "Inventory management and point of sale system for pharmacies." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   beforeLoad: async () => {

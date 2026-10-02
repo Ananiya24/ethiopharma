@@ -8,7 +8,14 @@ import { DollarSign, TrendingUp, ShoppingCart, Package, AlertTriangle, CalendarC
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
 export const Route = createFileRoute("/app/dashboard")({
-  head: () => ({ meta: [{ title: "Dashboard — Inventory Management" }] }),
+  head: () => ({ meta: [
+    { title: "Dashboard — Inventory Management" },
+    { name: "description", content: "Review pharmacy sales, profit, stock levels and alerts." },
+    { property: "og:title", content: "Dashboard — Inventory Management" },
+    { property: "og:description", content: "Review pharmacy sales, profit, stock levels and alerts." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   beforeLoad: async () => {
     const { redirect } = await import("@tanstack/react-router");
     const { data: userData } = await supabase.auth.getUser();
