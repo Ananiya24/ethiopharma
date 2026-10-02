@@ -9,7 +9,14 @@ import { Pill } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — Inventory Management for Pharmacy" }] }),
+  head: () => ({ meta: [
+    { title: "Sign in — Inventory Management for Pharmacy" },
+    { name: "description", content: "Sign in to manage your pharmacy inventory, sales and staff." },
+    { property: "og:title", content: "Sign in — Inventory Management for Pharmacy" },
+    { property: "og:description", content: "Sign in to manage your pharmacy inventory, sales and staff." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: AuthPage,
 });
 

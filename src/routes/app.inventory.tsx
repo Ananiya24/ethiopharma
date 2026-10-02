@@ -13,7 +13,14 @@ import { toast } from "sonner";
 import { useRole } from "@/hooks/use-role";
 
 export const Route = createFileRoute("/app/inventory")({
-  head: () => ({ meta: [{ title: "Inventory — Inventory Management" }] }),
+  head: () => ({ meta: [
+    { title: "Inventory — Inventory Management" },
+    { name: "description", content: "Manage pharmacy medicine stock, prices and expiry dates." },
+    { property: "og:title", content: "Inventory — Inventory Management" },
+    { property: "og:description", content: "Manage pharmacy medicine stock, prices and expiry dates." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: InventoryPage,
 });
 

@@ -12,7 +12,14 @@ import { UserPlus, Trash2, Users } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/staff")({
-  head: () => ({ meta: [{ title: "Staff — Inventory Management" }] }),
+  head: () => ({ meta: [
+    { title: "Staff — Inventory Management" },
+    { name: "description", content: "Manage pharmacist accounts for your pharmacy." },
+    { property: "og:title", content: "Staff — Inventory Management" },
+    { property: "og:description", content: "Manage pharmacist accounts for your pharmacy." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   beforeLoad: async () => {
     const { data: userData } = await supabase.auth.getUser();
     const uid = userData.user?.id;

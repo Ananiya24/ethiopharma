@@ -10,7 +10,14 @@ import { toast } from "sonner";
 import { useRole } from "@/hooks/use-role";
 
 export const Route = createFileRoute("/app/pos")({
-  head: () => ({ meta: [{ title: "POS — Inventory Management" }] }),
+  head: () => ({ meta: [
+    { title: "Point of Sale — Inventory Management" },
+    { name: "description", content: "Process medicine sales and track pharmacy stock." },
+    { property: "og:title", content: "Point of Sale — Inventory Management" },
+    { property: "og:description", content: "Process medicine sales and track pharmacy stock." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: POSPage,
 });
 
