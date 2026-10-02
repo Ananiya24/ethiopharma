@@ -1,0 +1,1 @@
+Keep phone account actions in a fixed, always-reachable Account sheet beside the horizontally scrolling page navigation, so they cannot disappear off-screen.
