@@ -1,8 +1,9 @@
 import { createFileRoute, Link, Outlet, useLocation, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Pill, Boxes, ShoppingCart, Home, LogOut, LayoutDashboard, Users, Activity, Building2, AlertTriangle } from "lucide-react";
+import { Pill, Boxes, ShoppingCart, Home, LogOut, LayoutDashboard, Users, Activity, Building2, AlertTriangle, CircleUserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useRole, useSubscription } from "@/hooks/use-role";
 
 export const Route = createFileRoute("/app")({
@@ -81,8 +82,8 @@ function AppLayout() {
 
       </aside>
       {/* Mobile bottom nav */}
-      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-card border-t border-border overflow-x-auto pb-[env(safe-area-inset-bottom)]">
-        <div className="flex min-w-full w-max">
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-card border-t border-border pb-[env(safe-area-inset-bottom)] flex min-w-0">
+        <div className="flex flex-1 min-w-0 overflow-x-auto">
           {nav.map((n) => {
             const Icon = n.icon;
             const active = pathname.startsWith(n.to);
@@ -93,6 +94,22 @@ function AppLayout() {
             );
           })}
         </div>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="ghost" className="shrink-0 h-auto min-w-[72px] rounded-none border-l border-border flex flex-col items-center gap-0.5 py-2.5 px-2 text-[11px] leading-tight" aria-label="Account menu" title="Account menu">
+              <CircleUserRound className="size-5" /> <span>Account</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[min(85vw,320px)] flex flex-col">
+            <SheetHeader className="text-left"><SheetTitle>Account</SheetTitle></SheetHeader>
+            {email && <p className="text-sm text-muted-foreground break-all">{email}</p>}
+            <div className="flex flex-col gap-2 border-t border-border pt-4">
+              <Button variant="ghost" className="justify-start" onClick={signOut}><LogOut className="size-4 mr-2" /> Sign out</Button>
+              <Button variant="ghost" className="justify-start" asChild><Link to="/"><Home className="size-4 mr-2" /> Back to website</Link></Button>
+            </div>
+            <p className="mt-auto text-xs text-muted-foreground">Made with <span className="font-semibold text-foreground">Zylos Tech</span></p>
+          </SheetContent>
+        </Sheet>
       </div>
 
       <main className="flex-1 min-w-0 pb-20 md:pb-0">
