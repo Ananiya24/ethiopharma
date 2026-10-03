@@ -1,10 +1,11 @@
 import { createFileRoute, Link, Outlet, useLocation, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Pill, Boxes, ShoppingCart, Home, LogOut, LayoutDashboard, Users, Activity, Building2, AlertTriangle, CircleUserRound } from "lucide-react";
+import { Pill, Boxes, ShoppingCart, Home, LogOut, LayoutDashboard, Users, Activity, Building2, AlertTriangle, CircleUserRound, BarChart3, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useRole, useSubscription } from "@/hooks/use-role";
+import { useOnlineStatus } from "@/lib/offline";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
@@ -30,12 +31,14 @@ function AppLayout() {
   const allNav = [
     { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard, ownerOnly: true },
     { to: "/app/inventory", label: "Inventory", icon: Boxes, ownerOnly: false },
-    { to: "/app/pos", label: "POS", icon: ShoppingCart, ownerOnly: false },
+    { to: "/app/pos", label: "POS", icon: ShoppingCart, ownerOnly: false, posOnly: true },
+    { to: "/app/reports", label: "Reports", icon: BarChart3, ownerOnly: true },
     { to: "/app/staff", label: "Staff", icon: Users, ownerOnly: true },
     { to: "/app/activity", label: "Activity", icon: Activity, ownerOnly: true },
     { to: "/app/admin", label: "Pharmacies", icon: Building2, ownerOnly: false, adminOnly: true },
   ] as const;
-  const nav = allNav.filter((n) => (!n.ownerOnly || isOwner) && (!("adminOnly" in n && n.adminOnly) || isPlatformAdmin));
+  const nav = allNav.filter((n) => (!n.ownerOnly || isOwner) && (!("adminOnly" in n && n.adminOnly) || isPlatformAdmin) && (!("posOnly" in n && n.posOnly) || subscription?.plan !== "inventory"));
+  const { online, pending } = useOnlineStatus();
   const expiry =
     subscription && !isPlatformAdmin
       ? !subscription.active
@@ -113,6 +116,12 @@ function AppLayout() {
       </div>
 
       <main className="flex-1 min-w-0 pb-20 md:pb-0">
+        {(!online || pending > 0) && (
+          <div className="flex items-center gap-2 px-4 py-2 text-sm bg-muted text-foreground">
+            <WifiOff className="size-4 shrink-0" />
+            <span>{!online ? "You are offline. Sales are saved on this device" : "Uploading offline sales"}{pending > 0 ? ` · ${pending} waiting to upload` : ""}.</span>
+          </div>
+        )}
         {expiry && (
           <div
             className={`flex items-start gap-2 px-4 py-3 text-sm ${

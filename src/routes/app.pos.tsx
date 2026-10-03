@@ -7,7 +7,8 @@ import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Plus, Minus, Trash2, ShoppingCart, Receipt, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
-import { useRole } from "@/hooks/use-role";
+import { useRole, useSubscription } from "@/hooks/use-role";
+import { cacheMedicines, cachedMedicines, enqueueSale, isNetworkError, syncQueue, useOnlineStatus } from "@/lib/offline";
 
 export const Route = createFileRoute("/app/pos")({
   head: () => ({ meta: [
@@ -38,10 +39,34 @@ function POSPage() {
   const [lastReceipt, setLastReceipt] = useState<{ saleNumber: string; total: number; items: CartItem[] } | null>(null);
 
   async function load() {
-    const { data } = await supabase.from("medicines").select("id,name,brand,quantity,unit_price,category").gt("quantity", 0).order("name");
-    setMeds((data as Medicine[]) ?? []);
+    const { data, error } = await supabase.from("medicines").select("id,name,brand,quantity,unit_price,category").gt("quantity", 0).order("name");
+    if (error || !data) { setMeds(cachedMedicines<Medicine>()); return; }
+    cacheMedicines(data);
+    setMeds(data as Medicine[]);
   }
   useEffect(() => { load(); }, []);
+  const { online, pending } = useOnlineStatus();
+  const { subscription } = useSubscription();
+  useEffect(() => {
+    if (!online || pending === 0) return;
+    syncQueue().then(({ synced, failed }) => {
+      if (synced) toast.success(`${synced} offline sale${synced === 1 ? "" : "s"} uploaded`);
+      failed.forEach((f) => toast.error(`Offline sale rejected — ${f}`, { duration: 10000 }));
+      load();
+    });
+  }, [online, pending]);
+
+  function saveOffline() {
+    const sale = enqueueSale({
+      items: cart.map((i) => ({ medicine_id: i.medicine.id, quantity: i.qty })),
+      payment_method: payment, cashier_name: cashier || undefined, total,
+    });
+    const next = meds.map((m) => { const c = cart.find((i) => i.medicine.id === m.id); return c ? { ...m, quantity: m.quantity - c.qty } : m; }).filter((m) => m.quantity > 0);
+    setMeds(next); cacheMedicines(next);
+    setLastReceipt({ saleNumber: `OFFLINE-${sale.id.slice(0, 6).toUpperCase()}`, total, items: [...cart] });
+    setCart([]); setCashier("");
+    toast.success("Saved offline — will upload when internet returns");
+  }
 
   const filtered = useMemo(() => {
     const s = q.toLowerCase();
@@ -75,6 +100,7 @@ function POSPage() {
     if (cart.length === 0) return;
     setProcessing(true);
     try {
+      if (!navigator.onLine) { saveOffline(); return; }
       if (!pharmacyId) throw new Error("No pharmacy assigned to your account");
 
       const items = cart.map((i) => ({
@@ -96,11 +122,24 @@ function POSPage() {
       load();
       toast.success("Sale completed");
     } catch (e: unknown) {
+      if (isNetworkError(e)) { saveOffline(); return; }
       const msg = e instanceof Error ? e.message : "Checkout failed";
       toast.error(msg);
     } finally {
       setProcessing(false);
     }
+  }
+
+  if (subscription?.plan === "inventory") {
+    return (
+      <div className="p-6 max-w-lg mx-auto">
+        <Card className="p-8 text-center space-y-2">
+          <ShoppingCart className="size-8 mx-auto text-muted-foreground" />
+          <h1 className="text-lg font-semibold">POS is not in your plan</h1>
+          <p className="text-sm text-muted-foreground">You are on Inventory only (3,900 birr/month). Contact your provider to upgrade to Inventory + POS (6,900 birr/month).</p>
+        </Card>
+      </div>
+    );
   }
 
   return (
