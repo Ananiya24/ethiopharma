@@ -95,6 +95,14 @@ function AdminPage() {
     load();
   }
 
+  async function setPlan(row: Row, plan: string) {
+    const fee = plan === "inventory" ? 3900 : 6900;
+    const { error } = await supabase.rpc("admin_update_subscription", { _pharmacy_id: row.id, _plan: plan, _monthly_fee: fee });
+    if (error) return toast.error(error.message);
+    toast.success(`${row.name} moved to ${plan === "inventory" ? "Inventory only" : "Inventory + POS"}`);
+    load();
+  }
+
   async function saveFee(row: Row, fee: string) {
     const value = Number(fee);
     if (Number.isNaN(value) || value === row.monthly_fee) return;
@@ -157,8 +165,18 @@ function AdminPage() {
               </div>
 
               <div className="flex flex-wrap items-end gap-2">
-                <div className="w-full sm:w-36">
-                  <Label className="text-[11px]">Monthly fee</Label>
+                <div className="w-full sm:w-52">
+                  <Label className="text-[11px]">Plan</Label>
+                  <Select value={r.plan} onValueChange={(v) => setPlan(r, v)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="inventory">Inventory only · 3,900 birr</SelectItem>
+                      <SelectItem value="inventory_pos">Inventory + POS · 6,900 birr</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="w-full sm:w-36" key={r.monthly_fee}>
+                  <Label className="text-[11px]">Monthly fee (birr)</Label>
                   <Input defaultValue={String(r.monthly_fee)} onBlur={(e) => saveFee(r, e.target.value)} />
                 </div>
                 <div className="w-full sm:w-40">

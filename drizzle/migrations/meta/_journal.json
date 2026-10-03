@@ -8,6 +8,13 @@
       "when": 1790815239495,
       "tag": "0000_owner_staff_rpcs",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791029041038,
+      "tag": "0001_plans_and_reports",
+      "breakpoints": true
     }
   ]
 }

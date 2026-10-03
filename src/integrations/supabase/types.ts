@@ -434,6 +434,10 @@ export type Database = {
         Args: { _cashier_name?: string; _items: Json; _payment_method?: string }
         Returns: Json
       }
+      sales_report: {
+        Args: { _from: string; _to: string; _vat_rate?: number }
+        Returns: Json
+      }
       subscription_active: { Args: { _pharmacy_id: string }; Returns: boolean }
     }
     Enums: {

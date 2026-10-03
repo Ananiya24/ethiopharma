@@ -19,6 +19,7 @@ import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
 import { Route as AppInventoryRouteImport } from './routes/app.inventory'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
 import { Route as AppPosRouteImport } from './routes/app.pos'
+import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppStaffRouteImport } from './routes/app.staff'
 
 const IndexRoute = IndexRouteImport.update({
@@ -71,6 +72,11 @@ const AppPosRoute = AppPosRouteImport.update({
   path: '/pos',
   getParentRoute: () => AppRoute,
 } as any)
+const AppReportsRoute = AppReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppStaffRoute = AppStaffRouteImport.update({
   id: '/staff',
   path: '/staff',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/app/inventory': typeof AppInventoryRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/pos': typeof AppPosRoute
+  '/app/reports': typeof AppReportsRoute
   '/app/staff': typeof AppStaffRoute
   '/app/': typeof AppIndexRoute
 }
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/app/inventory': typeof AppInventoryRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/pos': typeof AppPosRoute
+  '/app/reports': typeof AppReportsRoute
   '/app/staff': typeof AppStaffRoute
   '/app': typeof AppIndexRoute
 }
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/app/inventory': typeof AppInventoryRoute
   '/app/onboarding': typeof AppOnboardingRoute
   '/app/pos': typeof AppPosRoute
+  '/app/reports': typeof AppReportsRoute
   '/app/staff': typeof AppStaffRoute
   '/app/': typeof AppIndexRoute
 }
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/app/inventory'
     | '/app/onboarding'
     | '/app/pos'
+    | '/app/reports'
     | '/app/staff'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/app/inventory'
     | '/app/onboarding'
     | '/app/pos'
+    | '/app/reports'
     | '/app/staff'
     | '/app'
   id:
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/app/inventory'
     | '/app/onboarding'
     | '/app/pos'
+    | '/app/reports'
     | '/app/staff'
     | '/app/'
   fileRoutesById: FileRoutesById
@@ -235,6 +247,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/reports': {
+      id: '/app/reports'
+      path: '/reports'
+      fullPath: '/app/reports'
+      preLoaderRoute: typeof AppReportsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/staff': {
       id: '/app/staff'
       path: '/staff'
@@ -252,6 +271,7 @@ interface AppRouteChildren {
   AppInventoryRoute: typeof AppInventoryRoute
   AppOnboardingRoute: typeof AppOnboardingRoute
   AppPosRoute: typeof AppPosRoute
+  AppReportsRoute: typeof AppReportsRoute
   AppStaffRoute: typeof AppStaffRoute
   AppIndexRoute: typeof AppIndexRoute
 }
@@ -263,6 +283,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppInventoryRoute: AppInventoryRoute,
   AppOnboardingRoute: AppOnboardingRoute,
   AppPosRoute: AppPosRoute,
+  AppReportsRoute: AppReportsRoute,
   AppStaffRoute: AppStaffRoute,
   AppIndexRoute: AppIndexRoute,
 }
