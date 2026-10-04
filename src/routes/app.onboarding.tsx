@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Building2 } from "lucide-react";
+import { Building2, Check } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/onboarding")({
@@ -29,21 +29,27 @@ export const Route = createFileRoute("/app/onboarding")({
   component: OnboardingPage,
 });
 
+const PLANS = [
+  { id: "inventory" as const, name: "Inventory", price: "3,900", features: ["Medicines, batches, expiry & barcodes", "Stock in / stock out with reasons", "Low-stock & expiry alerts", "Inventory reports & staff accounts"] },
+  { id: "inventory_pos" as const, name: "Inventory + POS", price: "6,900", features: ["Everything in Inventory", "Point of sale with receipts (works offline)", "Daily/weekly sales, VAT & profit reports"] },
+];
+
 function OnboardingPage() {
   
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [plan, setPlan] = useState<"inventory" | "inventory_pos" | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim()) return toast.error("Pharmacy name is required");
+    if (!plan) return toast.error("Please choose a plan");
     setBusy(true);
     try {
-      const { error } = await supabase.rpc("create_pharmacy_for_current_user", { _name: name.trim() });
+      const { error } = await supabase.rpc("create_pharmacy_for_current_user", { _name: name.trim(), _plan: plan });
       if (error) throw error;
-      toast.success("Pharmacy created");
-      // Full reload so the sidebar picks up the new owner role immediately
-      window.location.assign("/app/dashboard");
+      toast.success("Pharmacy created — your 14-day free trial has started");
+      window.location.assign(plan === "inventory" ? "/app/inventory" : "/app/dashboard");
       return;
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Could not create pharmacy");
@@ -66,6 +72,24 @@ function OnboardingPage() {
           <div>
             <Label htmlFor="pname" className="text-xs">Pharmacy name</Label>
             <Input id="pname" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Abebe Pharmacy" required />
+          </div>
+          <div>
+            <Label className="text-xs">Choose your plan</Label>
+            <div className="grid gap-2 mt-1">
+              {PLANS.map((p) => (
+                <button type="button" key={p.id} onClick={() => setPlan(p.id)}
+                  className={`text-left rounded-lg border p-3 transition ${plan === p.id ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border hover:border-primary/50"}`}>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-semibold">{p.name}</span>
+                    <span className="font-bold whitespace-nowrap">{p.price} <span className="text-xs font-normal text-muted-foreground">birr/month</span></span>
+                  </div>
+                  <ul className="mt-2 space-y-1">
+                    {p.features.map((f) => <li key={f} className="text-xs text-muted-foreground flex gap-1.5"><Check className="size-3.5 text-primary shrink-0 mt-px" />{f}</li>)}
+                  </ul>
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">14 days free. After that, pay your provider monthly to keep access.</p>
           </div>
           <Button type="submit" className="w-full" disabled={busy}>{busy ? "Creating…" : "Create pharmacy"}</Button>
         </form>

@@ -302,6 +302,63 @@ export type Database = {
           },
         ]
       }
+      stock_movements: {
+        Row: {
+          change: number
+          created_at: string
+          id: string
+          medicine_id: string | null
+          medicine_name: string
+          note: string | null
+          pharmacy_id: string
+          reason: string
+          unit_cost: number
+          user_email: string | null
+          user_id: string
+        }
+        Insert: {
+          change: number
+          created_at?: string
+          id?: string
+          medicine_id?: string | null
+          medicine_name: string
+          note?: string | null
+          pharmacy_id: string
+          reason: string
+          unit_cost?: number
+          user_email?: string | null
+          user_id: string
+        }
+        Update: {
+          change?: number
+          created_at?: string
+          id?: string
+          medicine_id?: string | null
+          medicine_name?: string
+          note?: string | null
+          pharmacy_id?: string
+          reason?: string
+          unit_cost?: number
+          user_email?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_medicine_id_fkey"
+            columns: ["medicine_id"]
+            isOneToOne: false
+            referencedRelation: "medicines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_pharmacy_id_fkey"
+            columns: ["pharmacy_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscription_payments: {
         Row: {
           amount: number
@@ -383,6 +440,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      adjust_stock: {
+        Args: {
+          _medicine_id: string
+          _note?: string
+          _quantity: number
+          _reason: string
+        }
+        Returns: number
+      }
       admin_list_pharmacies: { Args: never; Returns: Json }
       admin_record_payment: {
         Args: {
@@ -406,7 +472,7 @@ export type Database = {
         Returns: undefined
       }
       create_pharmacy_for_current_user: {
-        Args: { _name: string }
+        Args: { _name: string; _plan?: string }
         Returns: string
       }
       current_pharmacy_id: { Args: never; Returns: string }
@@ -418,6 +484,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      inventory_report: { Args: { _from: string; _to: string }; Returns: Json }
       is_pharmacy_owner: { Args: { _pharmacy_id: string }; Returns: boolean }
       is_platform_admin: { Args: never; Returns: boolean }
       my_subscription: { Args: never; Returns: Json }

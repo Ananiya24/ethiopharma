@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Download, Printer } from "lucide-react";
+import { InventoryReport } from "@/components/InventoryReport";
+import { useSubscription } from "@/hooks/use-role";
 
 export const Route = createFileRoute("/app/reports")({
   head: () => ({ meta: [
@@ -38,13 +40,18 @@ function ReportsPage() {
   const [view, setView] = useState<"daily" | "weekly">("daily");
   const [data, setData] = useState<Report | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { subscription } = useSubscription();
+  const invOnly = subscription?.plan === "inventory";
+  const [tabPick, setTab] = useState<"sales" | "inventory">("sales");
+  const tab = invOnly ? "inventory" : tabPick;
 
   useEffect(() => {
+    if (invOnly) return;
     setError(null);
     supabase.rpc("sales_report", { _from: from, _to: to, _vat_rate: Number(vat) || 0 }).then(({ data, error }) => {
       if (error) setError(error.message); else setData(data as unknown as Report);
     });
-  }, [from, to, vat]);
+  }, [from, to, vat, invOnly]);
 
   function preset(days: number) {
     setTo(iso(new Date()));
@@ -81,10 +88,16 @@ function ReportsPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold">Reports</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground">Sales, VAT and profit for any period</p>
+          <p className="text-xs sm:text-sm text-muted-foreground">{invOnly ? "Stock value, stock in/out, losses and reorders" : "Sales, VAT, profit and stock for any period"}</p>
         </div>
         <div className="flex gap-2 print:hidden">
-          <Button variant="outline" onClick={exportCsv}><Download className="size-4" /> Excel (CSV)</Button>
+          {!invOnly && (
+            <div className="flex rounded-md border border-border p-0.5">
+              <Button size="sm" variant={tab === "sales" ? "default" : "ghost"} onClick={() => setTab("sales")}>Sales</Button>
+              <Button size="sm" variant={tab === "inventory" ? "default" : "ghost"} onClick={() => setTab("inventory")}>Inventory</Button>
+            </div>
+          )}
+          {tab === "sales" && <Button variant="outline" onClick={exportCsv}><Download className="size-4" /> Excel (CSV)</Button>}
           <Button variant="outline" onClick={() => window.print()}><Printer className="size-4" /> Print</Button>
         </div>
       </div>
@@ -93,17 +106,20 @@ function ReportsPage() {
         <CardContent className="p-4 grid gap-3 grid-cols-2 md:grid-cols-5 items-end">
           <div><Label className="text-xs">From</Label><Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} /></div>
           <div><Label className="text-xs">To</Label><Input type="date" value={to} onChange={(e) => setTo(e.target.value)} /></div>
-          <div><Label className="text-xs">VAT % (included in prices)</Label><Input inputMode="decimal" value={vat} onChange={(e) => setVat(e.target.value)} /></div>
+          {tab === "sales" && <div><Label className="text-xs">VAT % (included in prices)</Label><Input inputMode="decimal" value={vat} onChange={(e) => setVat(e.target.value)} /></div>}
           <div className="col-span-2 flex flex-wrap gap-2">
             <Button size="sm" variant="secondary" onClick={() => preset(1)}>Today</Button>
             <Button size="sm" variant="secondary" onClick={() => preset(7)}>7 days</Button>
             <Button size="sm" variant="secondary" onClick={() => preset(30)}>30 days</Button>
+            {tab === "sales" && <>
             <Button size="sm" variant={view === "daily" ? "default" : "outline"} onClick={() => setView("daily")}>Daily</Button>
             <Button size="sm" variant={view === "weekly" ? "default" : "outline"} onClick={() => setView("weekly")}>Weekly</Button>
+            </>}
           </div>
         </CardContent>
       </Card>
 
+      {tab === "inventory" ? <InventoryReport from={from} to={to} /> : <>
       {error && <div className="text-sm text-destructive">{error}</div>}
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
@@ -160,6 +176,7 @@ function ReportsPage() {
         </Card>
       </div>
       <p className="text-xs text-muted-foreground">Profit uses each medicine's current cost price. VAT is calculated as the share of the selling price at the rate above.</p>
+      </>}
     </div>
   );
 }

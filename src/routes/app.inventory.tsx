@@ -8,7 +8,8 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search, Pencil, Trash2, AlertTriangle, Package, Info } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, AlertTriangle, Package, Info, ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
+import { StockAdjustDialog } from "@/components/StockAdjustDialog";
 import { toast } from "sonner";
 import { useRole } from "@/hooks/use-role";
 
@@ -67,6 +68,7 @@ function InventoryPage() {
   const [editing, setEditing] = useState<Medicine | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [adjust, setAdjust] = useState<{ m: Medicine; dir: "in" | "out" } | null>(null);
 
   async function load() {
     setLoading(true);
@@ -328,6 +330,8 @@ function InventoryPage() {
                       ) : "—"}
                     </td>
                     <td className="px-4 py-3 text-right">
+                      <Button variant="ghost" size="icon" title="Stock in" aria-label="Stock in" onClick={() => setAdjust({ m, dir: "in" })}><ArrowDownToLine className="size-4 text-primary" /></Button>
+                      <Button variant="ghost" size="icon" title="Stock out" aria-label="Stock out" onClick={() => setAdjust({ m, dir: "out" })}><ArrowUpFromLine className="size-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => openEdit(m)}><Pencil className="size-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => remove(m)}><Trash2 className="size-4 text-destructive" /></Button>
                     </td>
@@ -338,6 +342,7 @@ function InventoryPage() {
           </table>
         </div>
       </Card>
+      <StockAdjustDialog medicine={adjust?.m ?? null} direction={adjust?.dir ?? "in"} onClose={() => setAdjust(null)} onDone={load} />
     </div>
   );
 }

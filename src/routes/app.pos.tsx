@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -130,17 +130,7 @@ function POSPage() {
     }
   }
 
-  if (subscription?.plan === "inventory") {
-    return (
-      <div className="p-6 max-w-lg mx-auto">
-        <Card className="p-8 text-center space-y-2">
-          <ShoppingCart className="size-8 mx-auto text-muted-foreground" />
-          <h1 className="text-lg font-semibold">POS is not in your plan</h1>
-          <p className="text-sm text-muted-foreground">You are on Inventory only (3,900 birr/month). Contact your provider to upgrade to Inventory + POS (6,900 birr/month).</p>
-        </Card>
-      </div>
-    );
-  }
+  if (subscription?.plan === "inventory") return <Navigate to="/app/inventory" replace />;
 
   return (
     <div className="p-3 sm:p-4 lg:p-6 grid lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_400px] gap-4 lg:gap-6 max-w-[1600px] mx-auto">
