@@ -81,7 +81,7 @@ export function StockAdjustDialog({
           </div>
           <div>
             <Label className="text-xs">{t('Note (optional)')}</Label>
-            <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder{t('Supplier, invoice no., customer…' )} />
+            <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder={t('Supplier, invoice no., customer…' )} />
           </div>
         </div>
         <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">

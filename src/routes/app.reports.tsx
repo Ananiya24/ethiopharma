@@ -34,7 +34,7 @@ function weekStart(day: string) {
 }
 
 function ReportsPage() {
-  const { t } = useLanguage();
+  const { t: tr } = useLanguage();
   const today = new Date();
   const [from, setFrom] = useState(iso(new Date(today.getTime() - 29 * 86400000)));
   const [to, setTo] = useState(iso(today));
@@ -89,33 +89,33 @@ function ReportsPage() {
     <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold">{t('Reports')}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">{tr('Reports')}</h1>
           <p className="text-xs sm:text-sm text-muted-foreground">{invOnly ? "Stock value, stock in/out, losses and reorders" : "Sales, VAT, profit and stock for any period"}</p>
         </div>
         <div className="flex gap-2 print:hidden">
           {!invOnly && (
             <div className="flex rounded-md border border-border p-0.5">
-              <Button size="sm" variant={tab === "sales" ? "default" : "ghost"} onClick={() => setTab("sales")}>{t('Sales')}</Button>
-              <Button size="sm" variant={tab === "inventory" ? "default" : "ghost"} onClick={() => setTab("inventory")}>{t('Inventory')}</Button>
+              <Button size="sm" variant={tab === "sales" ? "default" : "ghost"} onClick={() => setTab("sales")}>{tr('Sales')}</Button>
+              <Button size="sm" variant={tab === "inventory" ? "default" : "ghost"} onClick={() => setTab("inventory")}>{tr('Inventory')}</Button>
             </div>
           )}
-          {tab === "sales" && <Button variant="outline" onClick={exportCsv}><Download className="size-4" />{t('Excel (CSV)')}</Button>}
-          <Button variant="outline" onClick={() => window.print()}><Printer className="size-4" />{t('Print')}</Button>
+          {tab === "sales" && <Button variant="outline" onClick={exportCsv}><Download className="size-4" />{tr('Excel (CSV)')}</Button>}
+          <Button variant="outline" onClick={() => window.print()}><Printer className="size-4" />{tr('Print')}</Button>
         </div>
       </div>
 
       <Card className="print:hidden">
         <CardContent className="p-4 grid gap-3 grid-cols-2 md:grid-cols-5 items-end">
-          <div><Label className="text-xs">{t('From')}</Label><Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} /></div>
-          <div><Label className="text-xs">{t('To')}</Label><Input type="date" value={to} onChange={(e) => setTo(e.target.value)} /></div>
-          {tab === "sales" && <div><Label className="text-xs">{t('VAT % (included in prices)')}</Label><Input inputMode="decimal" value={vat} onChange={(e) => setVat(e.target.value)} /></div>}
+          <div><Label className="text-xs">{tr('From')}</Label><Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} /></div>
+          <div><Label className="text-xs">{tr('To')}</Label><Input type="date" value={to} onChange={(e) => setTo(e.target.value)} /></div>
+          {tab === "sales" && <div><Label className="text-xs">{tr('VAT % (included in prices)')}</Label><Input inputMode="decimal" value={vat} onChange={(e) => setVat(e.target.value)} /></div>}
           <div className="col-span-2 flex flex-wrap gap-2">
-            <Button size="sm" variant="secondary" onClick={() => preset(1)}>{t('Today')}</Button>
-            <Button size="sm" variant="secondary" onClick={() => preset(7)}>{t('7 days')}</Button>
-            <Button size="sm" variant="secondary" onClick={() => preset(30)}>{t('30 days')}</Button>
+            <Button size="sm" variant="secondary" onClick={() => preset(1)}>{tr('Today')}</Button>
+            <Button size="sm" variant="secondary" onClick={() => preset(7)}>{tr('7 days')}</Button>
+            <Button size="sm" variant="secondary" onClick={() => preset(30)}>{tr('30 days')}</Button>
             {tab === "sales" && <>
-            <Button size="sm" variant={view === "daily" ? "default" : "outline"} onClick={() => setView("daily")}>{t('Daily')}</Button>
-            <Button size="sm" variant={view === "weekly" ? "default" : "outline"} onClick={() => setView("weekly")}>{t('Weekly')}</Button>
+            <Button size="sm" variant={view === "daily" ? "default" : "outline"} onClick={() => setView("daily")}>{tr('Daily')}</Button>
+            <Button size="sm" variant={view === "weekly" ? "default" : "outline"} onClick={() => setView("weekly")}>{tr('Weekly')}</Button>
             </>}
           </div>
         </CardContent>
@@ -125,10 +125,10 @@ function ReportsPage() {
       {error && <div className="text-sm text-destructive">{error}</div>}
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
-        <Kpi label{t('Revenue' )} value={ETB(t.revenue)} sub={`${t.sales} sales`} />
-        <Kpi label{t('VAT collected' )} value={ETB(t.vat)} sub={`Excl. VAT: ${ETB(t.revenue - t.vat)}`} />
-        <Kpi label{t('Cost of goods' )} value={ETB(t.cost)} />
-        <Kpi label{t('Gross profit' )} value={ETB(t.profit)} sub={t.revenue ? `${((t.profit / t.revenue) * 100).toFixed(1)}% margin` : undefined} />
+        <Kpi label={tr('Revenue' )} value={ETB(t.revenue)} sub={`${t.sales} sales`} />
+        <Kpi label={tr('VAT collected' )} value={ETB(t.vat)} sub={`Excl. VAT: ${ETB(t.revenue - t.vat)}`} />
+        <Kpi label={tr('Cost of goods' )} value={ETB(t.cost)} />
+        <Kpi label={tr('Gross profit' )} value={ETB(t.profit)} sub={t.revenue ? `${((t.profit / t.revenue) * 100).toFixed(1)}% margin` : undefined} />
       </div>
 
       <Card>
@@ -136,10 +136,10 @@ function ReportsPage() {
         <CardContent className="overflow-x-auto">
           <table className="w-full text-sm min-w-[640px]">
             <thead className="text-left text-muted-foreground border-b border-border">
-              <tr><th className="py-2">{view === "daily" ? "Date" : "Week of"}</th><th>{t('Sales')}</th><th className="text-right">{t('Revenue')}</th><th className="text-right">{t('VAT')}</th><th className="text-right">{t('Cost')}</th><th className="text-right">{t('Profit')}</th></tr>
+              <tr><th className="py-2">{view === "daily" ? "Date" : "Week of"}</th><th>{tr('Sales')}</th><th className="text-right">{tr('Revenue')}</th><th className="text-right">{tr('VAT')}</th><th className="text-right">{tr('Cost')}</th><th className="text-right">{tr('Profit')}</th></tr>
             </thead>
             <tbody>
-              {rows.length === 0 && <tr><td colSpan={6} className="py-6 text-center text-muted-foreground">{t('No sales in this period.')}</td></tr>}
+              {rows.length === 0 && <tr><td colSpan={6} className="py-6 text-center text-muted-foreground">{tr('No sales in this period.')}</td></tr>}
               {rows.map((r) => (
                 <tr key={r.day} className="border-b border-border last:border-0">
                   <td className="py-2">{r.day}</td><td>{r.sales}</td>
@@ -150,7 +150,7 @@ function ReportsPage() {
             </tbody>
             {rows.length > 0 && (
               <tfoot className="font-semibold border-t border-border">
-                <tr><td className="py-2">{t('Total')}</td><td>{t.sales}</td><td className="text-right">{ETB(t.revenue)}</td><td className="text-right">{ETB(t.vat)}</td><td className="text-right">{ETB(t.cost)}</td><td className="text-right">{ETB(t.profit)}</td></tr>
+                <tr><td className="py-2">{tr('Total')}</td><td>{t.sales}</td><td className="text-right">{ETB(t.revenue)}</td><td className="text-right">{ETB(t.vat)}</td><td className="text-right">{ETB(t.cost)}</td><td className="text-right">{ETB(t.profit)}</td></tr>
               </tfoot>
             )}
           </table>
@@ -159,17 +159,17 @@ function ReportsPage() {
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
-          <CardHeader><CardTitle className="text-base">{t('By payment method')}</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">{tr('By payment method')}</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
-            {(data?.payments ?? []).length === 0 && <div className="text-muted-foreground">{t('No data.')}</div>}
+            {(data?.payments ?? []).length === 0 && <div className="text-muted-foreground">{tr('No data.')}</div>}
             {data?.payments.map((p) => <div key={p.method} className="flex justify-between"><span className="capitalize">{p.method}</span><span>{ETB(p.amount)}</span></div>)}
           </CardContent>
         </Card>
         <Card className="md:col-span-2">
-          <CardHeader><CardTitle className="text-base">{t('Best sellers & profit')}</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">{tr('Best sellers & profit')}</CardTitle></CardHeader>
           <CardContent className="overflow-x-auto">
             <table className="w-full text-sm min-w-[420px]">
-              <thead className="text-left text-muted-foreground"><tr><th className="py-1">{t('Medicine')}</th><th>{t('Qty')}</th><th className="text-right">{t('Revenue')}</th><th className="text-right">{t('Profit')}</th></tr></thead>
+              <thead className="text-left text-muted-foreground"><tr><th className="py-1">{tr('Medicine')}</th><th>{tr('Qty')}</th><th className="text-right">{tr('Revenue')}</th><th className="text-right">{tr('Profit')}</th></tr></thead>
               <tbody>
                 {data?.top.map((m) => <tr key={m.name}><td className="py-1 pr-2">{m.name}</td><td>{m.qty}</td><td className="text-right">{ETB(m.revenue)}</td><td className="text-right">{ETB(m.profit)}</td></tr>)}
               </tbody>
@@ -177,7 +177,7 @@ function ReportsPage() {
           </CardContent>
         </Card>
       </div>
-      <p className="text-xs text-muted-foreground">{t("Profit uses each medicine's current cost price. VAT is calculated as the share of the selling price at the rate above.")}</p>
+      <p className="text-xs text-muted-foreground">{tr("Profit uses each medicine's current cost price. VAT is calculated as the share of the selling price at the rate above.")}</p>
       </>}
     </div>
   );

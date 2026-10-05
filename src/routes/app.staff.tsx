@@ -120,7 +120,7 @@ function StaffPage() {
               </div>
               <div>
                 <Label className="text-xs">{t('Temporary password (min 6 chars)')}</Label>
-                <Input type="text" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder{t('Share this with the pharmacist' )} />
+                <Input type="text" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder={t('Share this with the pharmacist' )} />
                 <p className="text-[11px] text-muted-foreground mt-1">{t('The pharmacist gets a confirmation email and can sign in after clicking the link.')}</p>
               </div>
               <DialogFooter>

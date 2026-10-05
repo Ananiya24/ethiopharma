@@ -101,7 +101,7 @@ function AppLayout() {
         </div>
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" className="shrink-0 h-auto min-w-[72px] rounded-none border-l border-border flex flex-col items-center gap-0.5 py-2.5 px-2 text-[11px] leading-tight" aria-label{t('Account menu' )} title{t('Account menu' )}>
+            <Button variant="ghost" className="shrink-0 h-auto min-w-[72px] rounded-none border-l border-border flex flex-col items-center gap-0.5 py-2.5 px-2 text-[11px] leading-tight" aria-label={t('Account menu' )} title={t('Account menu' )}>
               <CircleUserRound className="size-5" /> <span>{t('Account')}</span>
             </Button>
           </SheetTrigger>

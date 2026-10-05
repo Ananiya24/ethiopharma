@@ -75,10 +75,10 @@ function DashboardPage() {
         <>
           {/* KPI cards */}
           <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
-            <KPI icon={DollarSign} label{t("Today's revenue" )} value={ETB(stats.today_revenue)} sub={`${stats.today_count} sales`} />
-            <KPI icon={TrendingUp} label{t("Today's profit" )} value={ETB(stats.today_profit)} sub{t('est.' )} />
-            <KPI icon={ShoppingCart} label{t('7-day revenue' )} value={ETB(stats.week_revenue)} sub={`${stats.week_count} sales`} />
-            <KPI icon={Package} label{t('Inventory value' )} value={ETB(stats.inventory_value)} sub={`${stats.medicine_count} items`} />
+            <KPI icon={DollarSign} label={t("Today's revenue" )} value={ETB(stats.today_revenue)} sub={`${stats.today_count} sales`} />
+            <KPI icon={TrendingUp} label={t("Today's profit" )} value={ETB(stats.today_profit)} sub={t('est.' )} />
+            <KPI icon={ShoppingCart} label={t('7-day revenue' )} value={ETB(stats.week_revenue)} sub={`${stats.week_count} sales`} />
+            <KPI icon={Package} label={t('Inventory value' )} value={ETB(stats.inventory_value)} sub={`${stats.medicine_count} items`} />
           </div>
 
           {/* Chart + Payments */}

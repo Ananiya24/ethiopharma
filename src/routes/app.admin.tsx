@@ -218,7 +218,7 @@ function AdminPage() {
             </div>
             <div>
               <Label className="text-xs">{t('Note (optional)')}</Label>
-              <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder{t('Bank transfer ref…' )} />
+              <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder={t('Bank transfer ref…' )} />
             </div>
             <p className="text-xs text-muted-foreground">{t('Access is extended from the current end date and the pharmacy is set to active.')}</p>
           </div>

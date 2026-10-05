@@ -195,16 +195,16 @@ function InventoryPage() {
               <DialogDescription>{t('Fields marked * are required.')}</DialogDescription>
             </DialogHeader>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Field className="sm:col-span-2" label{t('Name *' )}>
+              <Field className="sm:col-span-2" label={t('Name *' )}>
                 <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Amoxicillin 500mg" />
               </Field>
-              <Field label{t('Brand' )}>
+              <Field label={t('Brand' )}>
                 <Input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="" />
               </Field>
-              <Field label{t('Category' )}>
+              <Field label={t('Category' )}>
                 {categories.length > 0 ? (
                   <Select value={form.category || "__new__"} onValueChange={(v) => setForm({ ...form, category: v === "__new__" ? "" : v })}>
-                    <SelectTrigger><SelectValue placeholder{t('Select or type' )} /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t('Select or type' )} /></SelectTrigger>
                     <SelectContent className="bg-popover">
                       {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                       <SelectItem value="__new__">{t('+ New category…')}</SelectItem>
@@ -214,26 +214,26 @@ function InventoryPage() {
                   <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="e.g. Antibiotic" />
                 )}
                 {categories.length > 0 && (!form.category || !categories.includes(form.category)) && (
-                  <Input className="mt-2" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder{t('Type new category name' )} />
+                  <Input className="mt-2" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder={t('Type new category name' )} />
                 )}
               </Field>
-              <Field label{t('Batch #' )}>
+              <Field label={t('Batch #' )}>
                 <Input value={form.batch_number} onChange={(e) => setForm({ ...form, batch_number: e.target.value })} />
               </Field>
-              <Field label{t('Barcode' )}>
+              <Field label={t('Barcode' )}>
                 <Input value={form.barcode} onChange={(e) => setForm({ ...form, barcode: e.target.value })} />
               </Field>
-              <Field label{t('Quantity *' )}>
+              <Field label={t('Quantity *' )}>
                 <Input type="number" inputMode="numeric" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} placeholder="" />
               </Field>
               <Field
-                label{t('Reorder level' )}
-                hint{t('Alert me when stock drops to this number. Helps you reorder before running out.' )}
+                label={t('Reorder level' )}
+                hint={t('Alert me when stock drops to this number. Helps you reorder before running out.' )}
               >
                 <Input type="number" inputMode="numeric" value={form.reorder_level} onChange={(e) => setForm({ ...form, reorder_level: e.target.value })} />
               </Field>
               {isOwner && (
-                <Field label{t('Cost price (ETB)' )} hint{t('What you pay the supplier. Used to calculate profit. Owner-only.' )}>
+                <Field label{t('Cost price (ETB)' )} hint={t('What you pay the supplier. Used to calculate profit. Owner-only.' )}>
                   <Input type="number" step="0.01" inputMode="decimal" value={form.cost_price} onChange={(e) => setForm({ ...form, cost_price: e.target.value })} placeholder="" />
                 </Field>
               )}
@@ -252,7 +252,7 @@ function InventoryPage() {
                   placeholder=""
                 />
               </Field>
-              <Field className="sm:col-span-2" label{t('Expiry date *' )}>
+              <Field className="sm:col-span-2" label={t('Expiry date *' )}>
                 <Input type="date" value={form.expiry_date} onChange={(e) => setForm({ ...form, expiry_date: e.target.value })} />
               </Field>
             </div>
@@ -266,20 +266,20 @@ function InventoryPage() {
 
       {/* Stats — pharmacists don't see stock value (money) */}
       <div className={`grid gap-4 mb-6 grid-cols-2 ${isOwner ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
-        <Stat icon={Package} label{t('Total items' )} value={items.length.toString()} />
-        <Stat icon={AlertTriangle} label{t('Low stock' )} value={lowStock.toString()} accent={lowStock > 0} />
-        <Stat icon={AlertTriangle} label{t('Expiring < 60d' )} value={expiringSoon.toString()} accent={expiringSoon > 0} />
-        {isOwner && <Stat icon={Package} label{t('Stock value' )} value={`ETB ${totalValue.toLocaleString()}`} />}
+        <Stat icon={Package} label={t('Total items' )} value={items.length.toString()} />
+        <Stat icon={AlertTriangle} label={t('Low stock' )} value={lowStock.toString()} accent={lowStock > 0} />
+        <Stat icon={AlertTriangle} label={t('Expiring < 60d' )} value={expiringSoon.toString()} accent={expiringSoon > 0} />
+        {isOwner && <Stat icon={Package} label={t('Stock value' )} value={`ETB ${totalValue.toLocaleString()}`} />}
       </div>
 
       {/* Search + Category filter */}
       <div className="flex flex-wrap gap-3 mb-4">
         <div className="relative flex-1 min-w-0 sm:min-w-[200px] sm:max-w-md">
           <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder{t('Search by name, brand, batch…' )} className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('Search by name, brand, batch…' )} className="pl-9" />
         </div>
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-full sm:w-[200px]"><SelectValue placeholder{t('Filter by category' )} /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-[200px]"><SelectValue placeholder={t('Filter by category' )} /></SelectTrigger>
           <SelectContent className="bg-popover">
             <SelectItem value="all">{t('All categories')}</SelectItem>
             {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
@@ -332,8 +332,8 @@ function InventoryPage() {
                       ) : "—"}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <Button variant="ghost" size="icon" title{t('Stock in' )} aria-label{t('Stock in' )} onClick={() => setAdjust({ m, dir: "in" })}><ArrowDownToLine className="size-4 text-primary" /></Button>
-                      <Button variant="ghost" size="icon" title{t('Stock out' )} aria-label{t('Stock out' )} onClick={() => setAdjust({ m, dir: "out" })}><ArrowUpFromLine className="size-4" /></Button>
+                      <Button variant="ghost" size="icon" title={t('Stock in' )} aria-label={t('Stock in' )} onClick={() => setAdjust({ m, dir: "in" })}><ArrowDownToLine className="size-4 text-primary" /></Button>
+                      <Button variant="ghost" size="icon" title={t('Stock out' )} aria-label={t('Stock out' )} onClick={() => setAdjust({ m, dir: "out" })}><ArrowUpFromLine className="size-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => openEdit(m)}><Pencil className="size-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => remove(m)}><Trash2 className="size-4 text-destructive" /></Button>
                     </td>

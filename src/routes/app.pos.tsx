@@ -146,7 +146,7 @@ function POSPage() {
         </div>
         <div className="relative mb-4">
           <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder{t('Search medicines or scan barcode…' )} className="pl-9 h-11" />
+          <Input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('Search medicines or scan barcode…' )} className="pl-9 h-11" />
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-3">
           {filtered.map((m) => (
@@ -196,7 +196,7 @@ function POSPage() {
 
         <div className="border-t border-border pt-4 mt-2 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <Input placeholder{t('Cashier name' )} value={cashier} onChange={(e) => setCashier(e.target.value)} />
+            <Input placeholder={t('Cashier name' )} value={cashier} onChange={(e) => setCashier(e.target.value)} />
             <Select value={payment} onValueChange={setPayment}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
