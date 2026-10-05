@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/i18n";
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -55,6 +56,7 @@ function daysLeft(iso: string) {
 }
 
 function AdminPage() {
+  const { t } = useLanguage();
   const [rows, setRows] = useState<Row[] | null>(null);
   const [denied, setDenied] = useState(false);
   const [payFor, setPayFor] = useState<Row | null>(null);
@@ -90,7 +92,7 @@ function AdminPage() {
     });
     setSaving(false);
     if (error) return toast.error(error.message);
-    toast.success("Payment recorded and access extended");
+    toast.success(t('Payment recorded and access extended'));
     setPayFor(null); setNote(""); setAmount(""); setMonths("1");
     load();
   }
@@ -108,7 +110,7 @@ function AdminPage() {
     if (Number.isNaN(value) || value === row.monthly_fee) return;
     const { error } = await supabase.rpc("admin_update_subscription", { _pharmacy_id: row.id, _monthly_fee: value });
     if (error) return toast.error(error.message);
-    toast.success("Monthly fee updated");
+    toast.success(t('Monthly fee updated'));
     load();
   }
 
@@ -117,8 +119,8 @@ function AdminPage() {
       <div className="p-6 md:p-10 max-w-lg">
         <Card className="p-8 text-center space-y-2">
           <ShieldAlert className="size-8 mx-auto text-muted-foreground" />
-          <h1 className="text-lg font-semibold">Administrators only</h1>
-          <p className="text-sm text-muted-foreground">This page is reserved for the software provider.</p>
+          <h1 className="text-lg font-semibold">{t('Administrators only')}</h1>
+          <p className="text-sm text-muted-foreground">{t('This page is reserved for the software provider.')}</p>
         </Card>
       </div>
     );
@@ -130,18 +132,18 @@ function AdminPage() {
   return (
     <div className="p-4 md:p-6 lg:p-8 space-y-6">
       <div>
-        <h1 className="text-xl sm:text-2xl font-display font-bold">Pharmacies</h1>
-        <p className="text-sm text-muted-foreground">Every pharmacy using the software, their subscription and payments.</p>
+        <h1 className="text-xl sm:text-2xl font-display font-bold">{t('Pharmacies')}</h1>
+        <p className="text-sm text-muted-foreground">{t('Every pharmacy using the software, their subscription and payments.')}</p>
       </div>
 
       <div className="grid gap-3 grid-cols-2 sm:grid-cols-3">
-        <Card className="p-4"><div className="text-xs text-muted-foreground">Pharmacies</div><div className="text-2xl font-bold">{rows?.length ?? "—"}</div></Card>
-        <Card className="p-4"><div className="text-xs text-muted-foreground">With active access</div><div className="text-2xl font-bold">{rows ? activeCount : "—"}</div></Card>
-        <Card className="p-4"><div className="text-xs text-muted-foreground">Monthly recurring</div><div className="text-2xl font-bold">{totalMonthly.toFixed(2)}</div></Card>
+        <Card className="p-4"><div className="text-xs text-muted-foreground">{t('Pharmacies')}</div><div className="text-2xl font-bold">{rows?.length ?? "—"}</div></Card>
+        <Card className="p-4"><div className="text-xs text-muted-foreground">{t('With active access')}</div><div className="text-2xl font-bold">{rows ? activeCount : "—"}</div></Card>
+        <Card className="p-4"><div className="text-xs text-muted-foreground">{t('Monthly recurring')}</div><div className="text-2xl font-bold">{totalMonthly.toFixed(2)}</div></Card>
       </div>
 
       <div className="space-y-3">
-        {rows?.length === 0 && <Card className="p-8 text-center text-sm text-muted-foreground">No pharmacies registered yet.</Card>}
+        {rows?.length === 0 && <Card className="p-8 text-center text-sm text-muted-foreground">{t('No pharmacies registered yet.')}</Card>}
         {rows?.map((r) => {
           const left = daysLeft(r.subscription_ends_at);
           return (
@@ -166,28 +168,28 @@ function AdminPage() {
 
               <div className="flex flex-wrap items-end gap-2">
                 <div className="w-full sm:w-52">
-                  <Label className="text-[11px]">Plan</Label>
+                  <Label className="text-[11px]">{t('Plan')}</Label>
                   <Select value={r.plan} onValueChange={(v) => setPlan(r, v)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="inventory">Inventory only · 3,900 birr</SelectItem>
-                      <SelectItem value="inventory_pos">Inventory + POS · 6,900 birr</SelectItem>
+                      <SelectItem value="inventory">{t('Inventory only · 3,900 birr')}</SelectItem>
+                      <SelectItem value="inventory_pos">{t('Inventory + POS · 6,900 birr')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="w-full sm:w-36" key={r.monthly_fee}>
-                  <Label className="text-[11px]">Monthly fee (birr)</Label>
+                  <Label className="text-[11px]">{t('Monthly fee (birr)')}</Label>
                   <Input defaultValue={String(r.monthly_fee)} onBlur={(e) => saveFee(r, e.target.value)} />
                 </div>
                 <div className="w-full sm:w-40">
-                  <Label className="text-[11px]">Status</Label>
+                  <Label className="text-[11px]">{t('Status')}</Label>
                   <Select value={r.subscription_status} onValueChange={(v) => setStatus(r, v as Row["subscription_status"])}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="trial">Trial</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="past_due">Past due</SelectItem>
-                      <SelectItem value="suspended">Suspended</SelectItem>
+                      <SelectItem value="trial">{t('Trial')}</SelectItem>
+                      <SelectItem value="active">{t('Active')}</SelectItem>
+                      <SelectItem value="past_due">{t('Past due')}</SelectItem>
+                      <SelectItem value="suspended">{t('Suspended')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -199,7 +201,7 @@ function AdminPage() {
             </Card>
           );
         })}
-        {!rows && !denied && <Card className="p-8 text-center text-sm text-muted-foreground">Loading…</Card>}
+        {!rows && !denied && <Card className="p-8 text-center text-sm text-muted-foreground">{t('Loading…')}</Card>}
       </div>
 
       <Dialog open={!!payFor} onOpenChange={(o) => !o && setPayFor(null)}>
@@ -207,21 +209,21 @@ function AdminPage() {
           <DialogHeader><DialogTitle>Record payment — {payFor?.name}</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div>
-              <Label className="text-xs">Amount received</Label>
+              <Label className="text-xs">{t('Amount received')}</Label>
               <Input value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" />
             </div>
             <div>
-              <Label className="text-xs">Months to extend</Label>
+              <Label className="text-xs">{t('Months to extend')}</Label>
               <Input value={months} onChange={(e) => setMonths(e.target.value)} inputMode="numeric" />
             </div>
             <div>
-              <Label className="text-xs">Note (optional)</Label>
-              <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Bank transfer ref…" />
+              <Label className="text-xs">{t('Note (optional)')}</Label>
+              <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder={t('Bank transfer ref…' )} />
             </div>
-            <p className="text-xs text-muted-foreground">Access is extended from the current end date and the pharmacy is set to active.</p>
+            <p className="text-xs text-muted-foreground">{t('Access is extended from the current end date and the pharmacy is set to active.')}</p>
           </div>
           <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">
-            <Button variant="ghost" onClick={() => setPayFor(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setPayFor(null)}>{t('Cancel')}</Button>
             <Button onClick={recordPayment} disabled={saving}>{saving ? "Saving…" : "Save payment"}</Button>
           </DialogFooter>
         </DialogContent>

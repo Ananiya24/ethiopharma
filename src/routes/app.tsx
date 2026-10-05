@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/i18n";
 import { createFileRoute, Link, Outlet, useLocation, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/app")({
 });
 
 function AppLayout() {
+  const { t, language, setLanguage } = useLanguage();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [email, setEmail] = useState<string | null>(null);
@@ -55,7 +57,7 @@ function AppLayout() {
             <Pill className="size-4" />
           </span>
           <div>
-            <div className="font-display font-bold text-sm leading-tight">Inventory Management</div>
+            <div className="font-display font-bold text-sm leading-tight">{t('Inventory Management')}</div>
             <div className="text-[10px] text-muted-foreground">for Pharmacy{role ? ` · ${role}` : ""}</div>
           </div>
         </div>
@@ -99,18 +101,18 @@ function AppLayout() {
         </div>
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" className="shrink-0 h-auto min-w-[72px] rounded-none border-l border-border flex flex-col items-center gap-0.5 py-2.5 px-2 text-[11px] leading-tight" aria-label="Account menu" title="Account menu">
-              <CircleUserRound className="size-5" /> <span>Account</span>
+            <Button variant="ghost" className="shrink-0 h-auto min-w-[72px] rounded-none border-l border-border flex flex-col items-center gap-0.5 py-2.5 px-2 text-[11px] leading-tight" aria-label={t('Account menu' )} title={t('Account menu' )}>
+              <CircleUserRound className="size-5" /> <span>{t('Account')}</span>
             </Button>
           </SheetTrigger>
           <SheetContent side="right" className="w-[min(85vw,320px)] flex flex-col">
-            <SheetHeader className="text-left"><SheetTitle>Account</SheetTitle></SheetHeader>
+            <SheetHeader className="text-left"><SheetTitle>{t('Account')}</SheetTitle></SheetHeader>
             {email && <p className="text-sm text-muted-foreground break-all">{email}</p>}
             <div className="flex flex-col gap-2 border-t border-border pt-4">
-              <Button variant="ghost" className="justify-start" onClick={signOut}><LogOut className="size-4 mr-2" /> Sign out</Button>
-              <Button variant="ghost" className="justify-start" asChild><Link to="/"><Home className="size-4 mr-2" /> Back to website</Link></Button>
+              <Button variant="ghost" className="justify-start" onClick={signOut}><LogOut className="size-4 mr-2" />{t('Sign out')}</Button>
+              <Button variant="ghost" className="justify-start" asChild><Link to="/"><Home className="size-4 mr-2" />{t('Back to website')}</Link></Button>
             </div>
-            <p className="mt-auto text-xs text-muted-foreground">Made with <span className="font-semibold text-foreground">Zylos Tech</span></p>
+            <p className="mt-auto text-xs text-muted-foreground">{t('Made with')}<span className="font-semibold text-foreground">Zylos Tech</span></p>
           </SheetContent>
         </Sheet>
       </div>

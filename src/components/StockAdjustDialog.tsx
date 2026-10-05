@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/i18n";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ export function StockAdjustDialog({
   onClose: () => void;
   onDone: () => void;
 }) {
+  const { t } = useLanguage();
   const [qty, setQty] = useState("1");
   const [reason, setReason] = useState<string>(direction === "in" ? "delivery" : "dispensed");
   const [note, setNote] = useState("");
@@ -47,7 +49,7 @@ export function StockAdjustDialog({
   async function save() {
     if (!medicine) return;
     const n = Math.floor(Number(qty));
-    if (!n || n <= 0) return toast.error("Enter a quantity above 0");
+    if (!n || n <= 0) return toast.error(t('Enter a quantity above 0'));
     setSaving(true);
     const { data, error } = await supabase.rpc("adjust_stock", { _medicine_id: medicine.id, _quantity: n, _reason: reason, _note: note || undefined });
     setSaving(false);
@@ -65,11 +67,11 @@ export function StockAdjustDialog({
         </DialogHeader>
         <div className="space-y-3">
           <div>
-            <Label className="text-xs">Quantity</Label>
+            <Label className="text-xs">{t('Quantity')}</Label>
             <Input autoFocus inputMode="numeric" value={qty} onChange={(e) => setQty(e.target.value)} />
           </div>
           <div>
-            <Label className="text-xs">Reason</Label>
+            <Label className="text-xs">{t('Reason')}</Label>
             <Select value={reason} onValueChange={setReason}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -78,12 +80,12 @@ export function StockAdjustDialog({
             </Select>
           </div>
           <div>
-            <Label className="text-xs">Note (optional)</Label>
-            <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Supplier, invoice no., customer…" />
+            <Label className="text-xs">{t('Note (optional)')}</Label>
+            <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder={t('Supplier, invoice no., customer…' )} />
           </div>
         </div>
         <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">
-          <Button variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button variant="ghost" onClick={onClose}>{t('Cancel')}</Button>
           <Button onClick={save} disabled={saving}>{saving ? "Saving…" : "Save"}</Button>
         </DialogFooter>
       </DialogContent>

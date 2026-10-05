@@ -1,0 +1,2 @@
+- [ ] Add persistent English/Amharic selection across every page and workflow
+- [ ] Verify language switching in the preview and check all pages

@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/i18n";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -59,6 +60,7 @@ const emptyForm: FormState = {
 };
 
 function InventoryPage() {
+  const { t } = useLanguage();
   const { isOwner, pharmacyId } = useRole();
   const [items, setItems] = useState<Medicine[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,18 +108,18 @@ function InventoryPage() {
 
   async function save() {
     // Required fields
-    if (!form.name.trim()) return toast.error("Name is required");
-    if (form.quantity === "" || isNaN(Number(form.quantity))) return toast.error("Quantity is required");
-    if (form.unit_price === "" || isNaN(Number(form.unit_price))) return toast.error("Unit price is required");
-    if (!form.expiry_date) return toast.error("Expiry date is required");
+    if (!form.name.trim()) return toast.error(t('Name is required'));
+    if (form.quantity === "" || isNaN(Number(form.quantity))) return toast.error(t('Quantity is required'));
+    if (form.unit_price === "" || isNaN(Number(form.unit_price))) return toast.error(t('Unit price is required'));
+    if (!form.expiry_date) return toast.error(t('Expiry date is required'));
 
     const quantity = Number(form.quantity);
     const unit_price = Number(form.unit_price);
     const cost_price = form.cost_price === "" ? 0 : Number(form.cost_price);
     const reorder_level = form.reorder_level === "" ? 10 : Number(form.reorder_level);
 
-    if (quantity < 0) return toast.error("Quantity cannot be negative");
-    if (unit_price < 0) return toast.error("Unit price cannot be negative");
+    if (quantity < 0) return toast.error(t('Quantity cannot be negative'));
+    if (unit_price < 0) return toast.error(t('Unit price cannot be negative'));
 
     setSaving(true);
     try {
@@ -137,14 +139,14 @@ function InventoryPage() {
       if (editing) {
         const { error } = await supabase.from("medicines").update(payload).eq("id", editing.id);
         if (error) throw error;
-        toast.success("Medicine updated");
+        toast.success(t('Medicine updated'));
       } else {
-        if (!pharmacyId) throw new Error("No pharmacy assigned to your account");
+        if (!pharmacyId) throw new Error(t('No pharmacy assigned to your account'));
         const { error } = await supabase
           .from("medicines")
           .insert({ ...payload, pharmacy_id: pharmacyId });
         if (error) throw error;
-        toast.success("Medicine added");
+        toast.success(t('Medicine added'));
       }
       setOpen(false);
       load();
@@ -159,7 +161,7 @@ function InventoryPage() {
     if (!confirm(`Delete ${m.name}?`)) return;
     const { error } = await supabase.from("medicines").delete().eq("id", m.id);
     if (error) return toast.error(error.message);
-    toast.success("Deleted");
+    toast.success(t('Deleted'));
     load();
   }
 
@@ -180,63 +182,63 @@ function InventoryPage() {
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold">Inventory</h1>
-          <p className="text-sm text-muted-foreground">Manage your medicine stock</p>
+          <h1 className="text-2xl md:text-3xl font-bold">{t('Inventory')}</h1>
+          <p className="text-sm text-muted-foreground">{t('Manage your medicine stock')}</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="w-full sm:w-auto" onClick={openNew}><Plus className="size-4 mr-1" /> Add Medicine</Button>
+            <Button className="w-full sm:w-auto" onClick={openNew}><Plus className="size-4 mr-1" />{t('Add Medicine')}</Button>
           </DialogTrigger>
           <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-lg max-h-[85vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editing ? "Edit medicine" : "Add medicine"}</DialogTitle>
-              <DialogDescription>Fields marked * are required.</DialogDescription>
+              <DialogDescription>{t('Fields marked * are required.')}</DialogDescription>
             </DialogHeader>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Field className="sm:col-span-2" label="Name *">
+              <Field className="sm:col-span-2" label={t('Name *' )}>
                 <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Amoxicillin 500mg" />
               </Field>
-              <Field label="Brand">
+              <Field label={t('Brand' )}>
                 <Input value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="" />
               </Field>
-              <Field label="Category">
+              <Field label={t('Category' )}>
                 {categories.length > 0 ? (
                   <Select value={form.category || "__new__"} onValueChange={(v) => setForm({ ...form, category: v === "__new__" ? "" : v })}>
-                    <SelectTrigger><SelectValue placeholder="Select or type" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder={t('Select or type' )} /></SelectTrigger>
                     <SelectContent className="bg-popover">
                       {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                      <SelectItem value="__new__">+ New category…</SelectItem>
+                      <SelectItem value="__new__">{t('+ New category…')}</SelectItem>
                     </SelectContent>
                   </Select>
                 ) : (
                   <Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="e.g. Antibiotic" />
                 )}
                 {categories.length > 0 && (!form.category || !categories.includes(form.category)) && (
-                  <Input className="mt-2" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Type new category name" />
+                  <Input className="mt-2" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder={t('Type new category name' )} />
                 )}
               </Field>
-              <Field label="Batch #">
+              <Field label={t('Batch #' )}>
                 <Input value={form.batch_number} onChange={(e) => setForm({ ...form, batch_number: e.target.value })} />
               </Field>
-              <Field label="Barcode">
+              <Field label={t('Barcode' )}>
                 <Input value={form.barcode} onChange={(e) => setForm({ ...form, barcode: e.target.value })} />
               </Field>
-              <Field label="Quantity *">
+              <Field label={t('Quantity *' )}>
                 <Input type="number" inputMode="numeric" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} placeholder="" />
               </Field>
               <Field
-                label="Reorder level"
-                hint="Alert me when stock drops to this number. Helps you reorder before running out."
+                label={t('Reorder level' )}
+                hint={t('Alert me when stock drops to this number. Helps you reorder before running out.' )}
               >
                 <Input type="number" inputMode="numeric" value={form.reorder_level} onChange={(e) => setForm({ ...form, reorder_level: e.target.value })} />
               </Field>
               {isOwner && (
-                <Field label="Cost price (ETB)" hint="What you pay the supplier. Used to calculate profit. Owner-only.">
+                <Field label{t('Cost price (ETB)' )} hint={t('What you pay the supplier. Used to calculate profit. Owner-only.' )}>
                   <Input type="number" step="0.01" inputMode="decimal" value={form.cost_price} onChange={(e) => setForm({ ...form, cost_price: e.target.value })} placeholder="" />
                 </Field>
               )}
               <Field
-                label="Unit price (ETB) *"
+                label{t('Unit price (ETB) *' )}
                 className={isOwner ? "" : "sm:col-span-2"}
                 hint={!isOwner && editing ? "Only the pharmacy owner can change prices." : undefined}
               >
@@ -250,12 +252,12 @@ function InventoryPage() {
                   placeholder=""
                 />
               </Field>
-              <Field className="sm:col-span-2" label="Expiry date *">
+              <Field className="sm:col-span-2" label={t('Expiry date *' )}>
                 <Input type="date" value={form.expiry_date} onChange={(e) => setForm({ ...form, expiry_date: e.target.value })} />
               </Field>
             </div>
             <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">
-              <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setOpen(false)}>{t('Cancel')}</Button>
               <Button onClick={save} disabled={saving}>{saving ? "Saving…" : editing ? "Update" : "Add"}</Button>
             </DialogFooter>
           </DialogContent>
@@ -264,22 +266,22 @@ function InventoryPage() {
 
       {/* Stats — pharmacists don't see stock value (money) */}
       <div className={`grid gap-4 mb-6 grid-cols-2 ${isOwner ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
-        <Stat icon={Package} label="Total items" value={items.length.toString()} />
-        <Stat icon={AlertTriangle} label="Low stock" value={lowStock.toString()} accent={lowStock > 0} />
-        <Stat icon={AlertTriangle} label="Expiring < 60d" value={expiringSoon.toString()} accent={expiringSoon > 0} />
-        {isOwner && <Stat icon={Package} label="Stock value" value={`ETB ${totalValue.toLocaleString()}`} />}
+        <Stat icon={Package} label={t('Total items' )} value={items.length.toString()} />
+        <Stat icon={AlertTriangle} label={t('Low stock' )} value={lowStock.toString()} accent={lowStock > 0} />
+        <Stat icon={AlertTriangle} label={t('Expiring < 60d' )} value={expiringSoon.toString()} accent={expiringSoon > 0} />
+        {isOwner && <Stat icon={Package} label={t('Stock value' )} value={`ETB ${totalValue.toLocaleString()}`} />}
       </div>
 
       {/* Search + Category filter */}
       <div className="flex flex-wrap gap-3 mb-4">
         <div className="relative flex-1 min-w-0 sm:min-w-[200px] sm:max-w-md">
           <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name, brand, batch…" className="pl-9" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('Search by name, brand, batch…' )} className="pl-9" />
         </div>
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-full sm:w-[200px]"><SelectValue placeholder="Filter by category" /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-[200px]"><SelectValue placeholder={t('Filter by category' )} /></SelectTrigger>
           <SelectContent className="bg-popover">
-            <SelectItem value="all">All categories</SelectItem>
+            <SelectItem value="all">{t('All categories')}</SelectItem>
             {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
           </SelectContent>
         </Select>
@@ -291,18 +293,18 @@ function InventoryPage() {
           <table className="w-full text-sm min-w-[720px]">
             <thead className="bg-secondary/50 text-muted-foreground text-left">
               <tr>
-                <th className="px-4 py-3 font-medium">Medicine</th>
-                <th className="px-4 py-3 font-medium">Category</th>
-                <th className="px-4 py-3 font-medium">Batch</th>
-                <th className="px-4 py-3 font-medium text-right">Qty</th>
-                <th className="px-4 py-3 font-medium text-right">Price (ETB)</th>
-                <th className="px-4 py-3 font-medium">Expiry</th>
+                <th className="px-4 py-3 font-medium">{t('Medicine')}</th>
+                <th className="px-4 py-3 font-medium">{t('Category')}</th>
+                <th className="px-4 py-3 font-medium">{t('Batch')}</th>
+                <th className="px-4 py-3 font-medium text-right">{t('Qty')}</th>
+                <th className="px-4 py-3 font-medium text-right">{t('Price (ETB)')}</th>
+                <th className="px-4 py-3 font-medium">{t('Expiry')}</th>
                 <th className="px-4 py-3 font-medium"></th>
               </tr>
             </thead>
             <tbody>
-              {loading && <tr><td colSpan={7} className="p-8 text-center text-muted-foreground">Loading…</td></tr>}
-              {!loading && filtered.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-muted-foreground">No medicines found</td></tr>}
+              {loading && <tr><td colSpan={7} className="p-8 text-center text-muted-foreground">{t('Loading…')}</td></tr>}
+              {!loading && filtered.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-muted-foreground">{t('No medicines found')}</td></tr>}
               {filtered.map((m) => {
                 const low = m.quantity <= m.reorder_level;
                 const expSoon = m.expiry_date && new Date(m.expiry_date) <= soon;
@@ -317,21 +319,21 @@ function InventoryPage() {
                     <td className="px-4 py-3 text-muted-foreground">{m.batch_number ?? "—"}</td>
                     <td className="px-4 py-3 text-right">
                       <span className={low ? "text-destructive font-semibold" : ""}>{m.quantity}</span>
-                      {low && <Badge variant="destructive" className="ml-2">Low</Badge>}
+                      {low && <Badge variant="destructive" className="ml-2">{t('Low')}</Badge>}
                     </td>
                     <td className="px-4 py-3 text-right">{Number(m.unit_price).toFixed(2)}</td>
                     <td className="px-4 py-3">
                       {m.expiry_date ? (
                         <span className={expired ? "text-destructive" : expSoon ? "text-accent-foreground" : ""}>
                           {m.expiry_date}
-                          {expired && <Badge variant="destructive" className="ml-2">Expired</Badge>}
-                          {!expired && expSoon && <Badge className="ml-2 bg-accent text-accent-foreground">Soon</Badge>}
+                          {expired && <Badge variant="destructive" className="ml-2">{t('Expired')}</Badge>}
+                          {!expired && expSoon && <Badge className="ml-2 bg-accent text-accent-foreground">{t('Soon')}</Badge>}
                         </span>
                       ) : "—"}
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <Button variant="ghost" size="icon" title="Stock in" aria-label="Stock in" onClick={() => setAdjust({ m, dir: "in" })}><ArrowDownToLine className="size-4 text-primary" /></Button>
-                      <Button variant="ghost" size="icon" title="Stock out" aria-label="Stock out" onClick={() => setAdjust({ m, dir: "out" })}><ArrowUpFromLine className="size-4" /></Button>
+                      <Button variant="ghost" size="icon" title={t('Stock in' )} aria-label={t('Stock in' )} onClick={() => setAdjust({ m, dir: "in" })}><ArrowDownToLine className="size-4 text-primary" /></Button>
+                      <Button variant="ghost" size="icon" title={t('Stock out' )} aria-label={t('Stock out' )} onClick={() => setAdjust({ m, dir: "out" })}><ArrowUpFromLine className="size-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => openEdit(m)}><Pencil className="size-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => remove(m)}><Trash2 className="size-4 text-destructive" /></Button>
                     </td>

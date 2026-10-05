@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -44,6 +45,7 @@ type Stats = {
 const ETB = (n: number) => `ETB ${Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
 
 function DashboardPage() {
+  const { t } = useLanguage();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -61,28 +63,28 @@ function DashboardPage() {
     <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-6">
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-xl sm:text-2xl font-bold">Dashboard</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground">Overview of sales, profit, stock and alerts</p>
+          <h1 className="text-xl sm:text-2xl font-bold">{t('Dashboard')}</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">{t('Overview of sales, profit, stock and alerts')}</p>
         </div>
-        <Button asChild className="shrink-0"><Link to="/app/pos"><ShoppingCart className="size-4" /> New sale</Link></Button>
+        <Button asChild className="shrink-0"><Link to="/app/pos"><ShoppingCart className="size-4" />{t('New sale')}</Link></Button>
       </div>
 
       {loading || !stats ? (
-        <div className="text-muted-foreground">Loading…</div>
+        <div className="text-muted-foreground">{t('Loading…')}</div>
       ) : (
         <>
           {/* KPI cards */}
           <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
-            <KPI icon={DollarSign} label="Today's revenue" value={ETB(stats.today_revenue)} sub={`${stats.today_count} sales`} />
-            <KPI icon={TrendingUp} label="Today's profit" value={ETB(stats.today_profit)} sub="est." />
-            <KPI icon={ShoppingCart} label="7-day revenue" value={ETB(stats.week_revenue)} sub={`${stats.week_count} sales`} />
-            <KPI icon={Package} label="Inventory value" value={ETB(stats.inventory_value)} sub={`${stats.medicine_count} items`} />
+            <KPI icon={DollarSign} label={t("Today's revenue" )} value={ETB(stats.today_revenue)} sub={`${stats.today_count} sales`} />
+            <KPI icon={TrendingUp} label={t("Today's profit" )} value={ETB(stats.today_profit)} sub={t('est.' )} />
+            <KPI icon={ShoppingCart} label={t('7-day revenue' )} value={ETB(stats.week_revenue)} sub={`${stats.week_count} sales`} />
+            <KPI icon={Package} label={t('Inventory value' )} value={ETB(stats.inventory_value)} sub={`${stats.medicine_count} items`} />
           </div>
 
           {/* Chart + Payments */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card className="md:col-span-2">
-              <CardHeader><CardTitle className="text-base">Last 7 days revenue</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-base">{t('Last 7 days revenue')}</CardTitle></CardHeader>
               <CardContent className="h-56 sm:h-64 px-2 sm:px-6">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chart}>
@@ -96,9 +98,9 @@ function DashboardPage() {
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle className="text-base">Today by payment</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-base">{t('Today by payment')}</CardTitle></CardHeader>
               <CardContent className="space-y-3">
-                {stats.payments.length === 0 ? <div className="text-sm text-muted-foreground">No sales yet today.</div> :
+                {stats.payments.length === 0 ? <div className="text-sm text-muted-foreground">{t('No sales yet today.')}</div> :
                   stats.payments.map((p) => (
                     <div key={p.method} className="flex items-center justify-between text-sm">
                       <span className="capitalize">{p.method}</span>
@@ -106,7 +108,7 @@ function DashboardPage() {
                     </div>
                   ))}
                 <div className="border-t pt-3 flex items-center justify-between font-semibold">
-                  <span>Total</span><span>{ETB(stats.today_revenue)}</span>
+                  <span>{t('Total')}</span><span>{ETB(stats.today_revenue)}</span>
                 </div>
                 <div className="text-xs text-muted-foreground">30-day profit: {ETB(stats.month_profit)} · 30-day revenue: {ETB(stats.month_revenue)}</div>
               </CardContent>
@@ -116,9 +118,9 @@ function DashboardPage() {
           {/* Top sellers + Alerts */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <Card className="lg:col-span-1">
-              <CardHeader><CardTitle className="text-base">Top sellers (30d)</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="text-base">{t('Top sellers (30d)')}</CardTitle></CardHeader>
               <CardContent className="space-y-2">
-                {stats.top_sellers.length === 0 ? <div className="text-sm text-muted-foreground">No sales yet.</div> :
+                {stats.top_sellers.length === 0 ? <div className="text-sm text-muted-foreground">{t('No sales yet.')}</div> :
                   stats.top_sellers.map((t) => (
                     <div key={t.name} className="flex items-center justify-between text-sm">
                       <span className="truncate pr-2">{t.name}</span>
@@ -130,28 +132,28 @@ function DashboardPage() {
 
             <Card>
               <CardHeader className="flex-row items-center justify-between">
-                <CardTitle className="text-base flex items-center gap-2"><AlertTriangle className="size-4 text-destructive" /> Low stock</CardTitle>
+                <CardTitle className="text-base flex items-center gap-2"><AlertTriangle className="size-4 text-destructive" />{t('Low stock')}</CardTitle>
                 <Badge variant="destructive">{stats.low_stock_count}</Badge>
               </CardHeader>
               <CardContent className="space-y-2">
-                {stats.low_stock.length === 0 ? <div className="text-sm text-muted-foreground">All stocked up.</div> :
+                {stats.low_stock.length === 0 ? <div className="text-sm text-muted-foreground">{t('All stocked up.')}</div> :
                   stats.low_stock.map((m) => (
                     <div key={m.id} className="flex items-center justify-between text-sm">
                       <span className="truncate pr-2">{m.name}</span>
                       <span className="text-muted-foreground">{m.quantity} / {m.reorder_level}</span>
                     </div>
                   ))}
-                <Link to="/app/inventory" className="text-xs text-primary inline-flex items-center gap-1 pt-1">Manage inventory <ArrowRight className="size-3" /></Link>
+                <Link to="/app/inventory" className="text-xs text-primary inline-flex items-center gap-1 pt-1">{t('Manage inventory')}<ArrowRight className="size-3" /></Link>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex-row items-center justify-between">
-                <CardTitle className="text-base flex items-center gap-2"><CalendarClock className="size-4" /> Expiring ≤ 60d</CardTitle>
+                <CardTitle className="text-base flex items-center gap-2"><CalendarClock className="size-4" />{t('Expiring ≤ 60d')}</CardTitle>
                 <Badge variant="secondary">{stats.expiring_count}</Badge>
               </CardHeader>
               <CardContent className="space-y-2">
-                {stats.expiring.length === 0 ? <div className="text-sm text-muted-foreground">Nothing expiring soon.</div> :
+                {stats.expiring.length === 0 ? <div className="text-sm text-muted-foreground">{t('Nothing expiring soon.')}</div> :
                   stats.expiring.map((m) => (
                     <div key={m.id} className="flex items-center justify-between text-sm">
                       <span className="truncate pr-2">{m.name}</span>
