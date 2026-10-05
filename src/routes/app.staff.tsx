@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/i18n";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
@@ -40,6 +41,7 @@ function signupClient() {
 }
 
 function StaffPage() {
+  const { t } = useLanguage();
 
   const [rows, setRows] = useState<StaffRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,13 +69,13 @@ function StaffPage() {
     setBusy(true);
     try {
       const clean = email.trim().toLowerCase();
-      if (password.length < 6) throw new Error("Password must be at least 6 characters");
+      if (password.length < 6) throw new Error(t('Password must be at least 6 characters'));
       const { data: su, error: suErr } = await signupClient().auth.signUp({
         email: clean, password, options: { emailRedirectTo: `${window.location.origin}/auth` },
       });
       if (suErr) throw new Error(suErr.message);
       const newId = su.user?.id;
-      if (!newId || (su.user?.identities && su.user.identities.length === 0)) throw new Error("That email is already registered");
+      if (!newId || (su.user?.identities && su.user.identities.length === 0)) throw new Error(t('That email is already registered'));
       const { error: rErr } = await supabase.rpc("owner_add_pharmacist", { _user_id: newId, _email: clean });
       if (rErr) throw new Error(rErr.message);
       toast.success(`Account created. ${clean} must confirm their email before signing in.`);
@@ -91,7 +93,7 @@ function StaffPage() {
     try {
       const { error } = await supabase.rpc("owner_remove_pharmacist", { _user_id: r.user_id });
       if (error) throw new Error(error.message);
-      toast.success("Access removed");
+      toast.success(t('Access removed'));
       load();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to delete");
@@ -102,27 +104,27 @@ function StaffPage() {
     <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold flex items-center gap-2"><Users className="size-6 shrink-0" /> Staff accounts</h1>
-          <p className="text-sm text-muted-foreground">Create login accounts for your pharmacists. They get inventory + POS access only.</p>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold flex items-center gap-2"><Users className="size-6 shrink-0" />{t('Staff accounts')}</h1>
+          <p className="text-sm text-muted-foreground">{t('Create login accounts for your pharmacists. They get inventory + POS access only.')}</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="w-full sm:w-auto"><UserPlus className="size-4 mr-1" /> Create pharmacist</Button>
+            <Button className="w-full sm:w-auto"><UserPlus className="size-4 mr-1" />{t('Create pharmacist')}</Button>
           </DialogTrigger>
           <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md">
-            <DialogHeader><DialogTitle>Create pharmacist account</DialogTitle></DialogHeader>
+            <DialogHeader><DialogTitle>{t('Create pharmacist account')}</DialogTitle></DialogHeader>
             <form onSubmit={submit} className="space-y-3">
               <div>
-                <Label className="text-xs">Email</Label>
+                <Label className="text-xs">{t('Email')}</Label>
                 <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="pharmacist@pharmacy.com" />
               </div>
               <div>
-                <Label className="text-xs">Temporary password (min 6 chars)</Label>
-                <Input type="text" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Share this with the pharmacist" />
-                <p className="text-[11px] text-muted-foreground mt-1">The pharmacist gets a confirmation email and can sign in after clicking the link.</p>
+                <Label className="text-xs">{t('Temporary password (min 6 chars)')}</Label>
+                <Input type="text" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder{t('Share this with the pharmacist' )} />
+                <p className="text-[11px] text-muted-foreground mt-1">{t('The pharmacist gets a confirmation email and can sign in after clicking the link.')}</p>
               </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t('Cancel')}</Button>
                 <Button type="submit" disabled={busy}>{busy ? "Creating…" : "Create account"}</Button>
               </DialogFooter>
             </form>
@@ -135,22 +137,22 @@ function StaffPage() {
           <table className="w-full text-sm min-w-[540px]">
             <thead className="bg-secondary/50 text-muted-foreground text-left">
               <tr>
-                <th className="px-4 py-3 font-medium">Email</th>
-                <th className="px-4 py-3 font-medium">Role</th>
-                <th className="px-4 py-3 font-medium">Created</th>
+                <th className="px-4 py-3 font-medium">{t('Email')}</th>
+                <th className="px-4 py-3 font-medium">{t('Role')}</th>
+                <th className="px-4 py-3 font-medium">{t('Created')}</th>
                 <th className="px-4 py-3 font-medium"></th>
               </tr>
             </thead>
             <tbody>
-              {loading && <tr><td colSpan={4} className="p-8 text-center text-muted-foreground">Loading…</td></tr>}
-              {!loading && rows.length === 0 && <tr><td colSpan={4} className="p-8 text-center text-muted-foreground">No accounts yet.</td></tr>}
+              {loading && <tr><td colSpan={4} className="p-8 text-center text-muted-foreground">{t('Loading…')}</td></tr>}
+              {!loading && rows.length === 0 && <tr><td colSpan={4} className="p-8 text-center text-muted-foreground">{t('No accounts yet.')}</td></tr>}
               {rows.map((r) => (
                 <tr key={r.user_id} className="border-t border-border hover:bg-secondary/30">
                   <td className="px-4 py-3 font-medium">{r.email}</td>
                   <td className="px-4 py-3">
                     <Badge variant={r.role === "owner" ? "default" : "secondary"} className="capitalize">{r.role}</Badge>
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}{r.confirmed === false && <span className="ml-2 text-xs text-amber-600">awaiting email confirmation</span>}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{new Date(r.created_at).toLocaleDateString()}{r.confirmed === false && <span className="ml-2 text-xs text-amber-600">{t('awaiting email confirmation')}</span>}</td>
                   <td className="px-4 py-3 text-right">
                     {r.role !== "owner" && (
                       <Button variant="ghost" size="icon" onClick={() => onDelete(r)}>

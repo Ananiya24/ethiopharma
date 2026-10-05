@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/i18n";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -35,6 +36,7 @@ const PLANS = [
 ];
 
 function OnboardingPage() {
+  const { t, language, setLanguage } = useLanguage();
   
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
@@ -42,13 +44,13 @@ function OnboardingPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim()) return toast.error("Pharmacy name is required");
-    if (!plan) return toast.error("Please choose a plan");
+    if (!name.trim()) return toast.error(t('Pharmacy name is required'));
+    if (!plan) return toast.error(t('Please choose a plan'));
     setBusy(true);
     try {
       const { error } = await supabase.rpc("create_pharmacy_for_current_user", { _name: name.trim(), _plan: plan });
       if (error) throw error;
-      toast.success("Pharmacy created — your 14-day free trial has started");
+      toast.success(t('Pharmacy created — your 14-day free trial has started'));
       window.location.assign(plan === "inventory" ? "/app/inventory" : "/app/dashboard");
       return;
     } catch (err) {
@@ -64,24 +66,24 @@ function OnboardingPage() {
         <span className="size-11 rounded-lg grid place-items-center text-primary-foreground mb-4" style={{ background: "var(--gradient-hero)" }}>
           <Building2 className="size-5" />
         </span>
-        <h1 className="text-2xl font-bold mb-1">Set up your pharmacy</h1>
+        <h1 className="text-2xl font-bold mb-1">{t('Set up your pharmacy')}</h1>
         <p className="text-sm text-muted-foreground mb-6">
           Your pharmacy gets its own private inventory, sales and staff. Nothing is shared with other pharmacies.
         </p>
         <form onSubmit={submit} className="space-y-4">
           <div>
-            <Label htmlFor="pname" className="text-xs">Pharmacy name</Label>
+            <Label htmlFor="pname" className="text-xs">{t('Pharmacy name')}</Label>
             <Input id="pname" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Abebe Pharmacy" required />
           </div>
           <div>
-            <Label className="text-xs">Choose your plan</Label>
+            <Label className="text-xs">{t('Choose your plan')}</Label>
             <div className="grid gap-2 mt-1">
               {PLANS.map((p) => (
                 <button type="button" key={p.id} onClick={() => setPlan(p.id)}
                   className={`text-left rounded-lg border p-3 transition ${plan === p.id ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border hover:border-primary/50"}`}>
                   <div className="flex items-baseline justify-between gap-2">
                     <span className="font-semibold">{p.name}</span>
-                    <span className="font-bold whitespace-nowrap">{p.price} <span className="text-xs font-normal text-muted-foreground">birr/month</span></span>
+                    <span className="font-bold whitespace-nowrap">{p.price} <span className="text-xs font-normal text-muted-foreground">{t('birr/month')}</span></span>
                   </div>
                   <ul className="mt-2 space-y-1">
                     {p.features.map((f) => <li key={f} className="text-xs text-muted-foreground flex gap-1.5"><Check className="size-3.5 text-primary shrink-0 mt-px" />{f}</li>)}
@@ -89,7 +91,7 @@ function OnboardingPage() {
                 </button>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground mt-2">14 days free. After that, pay your provider monthly to keep access.</p>
+            <p className="text-xs text-muted-foreground mt-2">{t('14 days free. After that, pay your provider monthly to keep access.')}</p>
           </div>
           <Button type="submit" className="w-full" disabled={busy}>{busy ? "Creating…" : "Create pharmacy"}</Button>
         </form>

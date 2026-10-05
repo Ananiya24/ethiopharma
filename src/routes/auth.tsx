@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/i18n";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/auth")({
 type Role = "owner" | "pharmacist";
 
 function AuthPage() {
+  const { t, language, setLanguage } = useLanguage();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -63,7 +65,7 @@ function AuthPage() {
           options: { emailRedirectTo: `${window.location.origin}/app` },
         });
         if (error) throw error;
-        toast.success("Account created. Set up your pharmacy next.");
+        toast.success(t('Account created. Set up your pharmacy next.'));
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -83,8 +85,8 @@ function AuthPage() {
             <Pill className="size-5" />
           </span>
           <div>
-            <div className="font-display font-bold leading-tight">Inventory Management</div>
-            <div className="text-xs text-muted-foreground">for Pharmacy</div>
+            <div className="font-display font-bold leading-tight">{t('Inventory Management')}</div>
+            <div className="text-xs text-muted-foreground">{t('for Pharmacy')}</div>
           </div>
         </div>
         <h1 className="text-2xl font-bold mb-1">{mode === "signup" ? "Register your pharmacy" : "Sign in"}</h1>
@@ -95,11 +97,11 @@ function AuthPage() {
         </p>
         <form onSubmit={submit} className="space-y-4">
           <div>
-            <Label htmlFor="email" className="text-xs">Email</Label>
+            <Label htmlFor="email" className="text-xs">{t('Email')}</Label>
             <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@pharmacy.com" />
           </div>
           <div>
-            <Label htmlFor="pw" className="text-xs">Password</Label>
+            <Label htmlFor="pw" className="text-xs">{t('Password')}</Label>
             <Input id="pw" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>

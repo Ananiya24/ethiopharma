@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/i18n";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +18,7 @@ const ETB = (n: number) => `ETB ${Number(n).toLocaleString(undefined, { minimumF
 const LOSS = ["damaged", "expired"];
 
 export function InventoryReport({ from, to }: { from: string; to: string }) {
+  const { t } = useLanguage();
   const [d, setD] = useState<Inv | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
@@ -26,7 +28,7 @@ export function InventoryReport({ from, to }: { from: string; to: string }) {
   }, [from, to]);
 
   if (error) return <div className="text-sm text-destructive">{error}</div>;
-  if (!d) return <div className="text-sm text-muted-foreground">Loading…</div>;
+  if (!d) return <div className="text-sm text-muted-foreground">{t('Loading…')}</div>;
 
   const sum = (f: (r: Inv["by_reason"][number]) => boolean, k: "qty" | "value") => d.by_reason.filter(f).reduce((s, r) => s + Number(r[k]), 0);
   const inQty = sum((r) => ["delivery", "returned", "correction_in"].includes(r.reason), "qty");
@@ -45,17 +47,17 @@ export function InventoryReport({ from, to }: { from: string; to: string }) {
   return (
     <div className="space-y-4">
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
-        <Kpi label="Stock value (cost)" value={ETB(d.stock_value_cost)} sub={`${d.medicine_count} medicines · ${d.units} units`} />
-        <Kpi label="Stock value (selling price)" value={ETB(d.stock_value_retail)} sub={`Potential profit ${ETB(d.stock_value_retail - d.stock_value_cost)}`} />
-        <Kpi label="Units in / out" value={`+${inQty} / −${outQty}`} sub="in this period" />
-        <Kpi label="Losses (damaged + expired)" value={ETB(loss)} sub="at cost price" />
+        <Kpi label{t('Stock value (cost)' )} value={ETB(d.stock_value_cost)} sub={`${d.medicine_count} medicines · ${d.units} units`} />
+        <Kpi label{t('Stock value (selling price)' )} value={ETB(d.stock_value_retail)} sub={`Potential profit ${ETB(d.stock_value_retail - d.stock_value_cost)}`} />
+        <Kpi label{t('Units in / out' )} value={`+${inQty} / −${outQty}`} sub{t('in this period' )} />
+        <Kpi label{t('Losses (damaged + expired)' )} value={ETB(loss)} sub{t('at cost price' )} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
-          <CardHeader><CardTitle className="text-base">Stock in / out by reason</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">{t('Stock in / out by reason')}</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
-            {d.by_reason.length === 0 && <div className="text-muted-foreground">No stock movements in this period.</div>}
+            {d.by_reason.length === 0 && <div className="text-muted-foreground">{t('No stock movements in this period.')}</div>}
             {d.by_reason.map((r) => (
               <div key={r.reason} className="flex justify-between gap-2"><span>{REASON_LABEL[r.reason] ?? r.reason}</span><span className="text-muted-foreground">{r.qty} units · {ETB(r.value)}</span></div>
             ))}
@@ -64,7 +66,7 @@ export function InventoryReport({ from, to }: { from: string; to: string }) {
         <Card>
           <CardHeader><CardTitle className="text-base">Need to reorder ({d.reorder.length})</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm max-h-64 overflow-y-auto">
-            {d.reorder.length === 0 && <div className="text-muted-foreground">All stocked up.</div>}
+            {d.reorder.length === 0 && <div className="text-muted-foreground">{t('All stocked up.')}</div>}
             {d.reorder.map((r) => <div key={r.name} className="flex justify-between"><span className="truncate pr-2">{r.name}</span><span className="text-muted-foreground">{r.quantity} / {r.reorder_level}</span></div>)}
           </CardContent>
         </Card>
@@ -72,7 +74,7 @@ export function InventoryReport({ from, to }: { from: string; to: string }) {
 
       {d.expired_in_stock.length > 0 && (
         <Card>
-          <CardHeader><CardTitle className="text-base text-destructive">Expired but still in stock</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base text-destructive">{t('Expired but still in stock')}</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
             {d.expired_in_stock.map((r) => <div key={r.name} className="flex justify-between gap-2"><span className="truncate">{r.name} · expired {r.expiry_date}</span><span className="text-muted-foreground">{r.quantity} units · {ETB(r.value)}</span></div>)}
           </CardContent>
@@ -81,14 +83,14 @@ export function InventoryReport({ from, to }: { from: string; to: string }) {
 
       <Card>
         <CardHeader className="flex-row items-center justify-between">
-          <CardTitle className="text-base">Stock movements</CardTitle>
-          <Button size="sm" variant="outline" onClick={exportCsv} className="print:hidden"><Download className="size-4" /> Excel (CSV)</Button>
+          <CardTitle className="text-base">{t('Stock movements')}</CardTitle>
+          <Button size="sm" variant="outline" onClick={exportCsv} className="print:hidden"><Download className="size-4" />{t('Excel (CSV)')}</Button>
         </CardHeader>
         <CardContent className="overflow-x-auto">
           <table className="w-full text-sm min-w-[600px]">
-            <thead className="text-left text-muted-foreground border-b border-border"><tr><th className="py-2">Date</th><th>Medicine</th><th className="text-right">Change</th><th>Reason</th><th>By</th></tr></thead>
+            <thead className="text-left text-muted-foreground border-b border-border"><tr><th className="py-2">{t('Date')}</th><th>{t('Medicine')}</th><th className="text-right">{t('Change')}</th><th>{t('Reason')}</th><th>{t('By')}</th></tr></thead>
             <tbody>
-              {d.movements.length === 0 && <tr><td colSpan={5} className="py-6 text-center text-muted-foreground">No movements yet. Use the Stock in / Stock out buttons on the Inventory page.</td></tr>}
+              {d.movements.length === 0 && <tr><td colSpan={5} className="py-6 text-center text-muted-foreground">{t('No movements yet. Use the Stock in / Stock out buttons on the Inventory page.')}</td></tr>}
               {d.movements.map((m, i) => (
                 <tr key={i} className="border-b border-border last:border-0">
                   <td className="py-2 whitespace-nowrap">{new Date(m.created_at).toLocaleString()}</td>

@@ -1,3 +1,4 @@
+import { useLanguage } from "@/lib/i18n";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,6 +30,7 @@ type Medicine = {
 type CartItem = { medicine: Medicine; qty: number };
 
 function POSPage() {
+  const { t } = useLanguage();
   const { pharmacyId } = useRole();
   const [meds, setMeds] = useState<Medicine[]>([]);
   const [q, setQ] = useState("");
@@ -65,7 +67,7 @@ function POSPage() {
     setMeds(next); cacheMedicines(next);
     setLastReceipt({ saleNumber: `OFFLINE-${sale.id.slice(0, 6).toUpperCase()}`, total, items: [...cart] });
     setCart([]); setCashier("");
-    toast.success("Saved offline — will upload when internet returns");
+    toast.success(t('Saved offline — will upload when internet returns'));
   }
 
   const filtered = useMemo(() => {
@@ -77,7 +79,7 @@ function POSPage() {
     setCart((c) => {
       const existing = c.find((i) => i.medicine.id === m.id);
       if (existing) {
-        if (existing.qty >= m.quantity) { toast.error("Not enough stock"); return c; }
+        if (existing.qty >= m.quantity) { toast.error(t('Not enough stock')); return c; }
         return c.map((i) => i.medicine.id === m.id ? { ...i, qty: i.qty + 1 } : i);
       }
       return [...c, { medicine: m, qty: 1 }];
@@ -88,7 +90,7 @@ function POSPage() {
       if (i.medicine.id !== id) return [i];
       const next = i.qty + delta;
       if (next <= 0) return [];
-      if (next > i.medicine.quantity) { toast.error("Not enough stock"); return [i]; }
+      if (next > i.medicine.quantity) { toast.error(t('Not enough stock')); return [i]; }
       return [{ ...i, qty: next }];
     }));
   }
@@ -101,7 +103,7 @@ function POSPage() {
     setProcessing(true);
     try {
       if (!navigator.onLine) { saveOffline(); return; }
-      if (!pharmacyId) throw new Error("No pharmacy assigned to your account");
+      if (!pharmacyId) throw new Error(t('No pharmacy assigned to your account'));
 
       const items = cart.map((i) => ({
         medicine_id: i.medicine.id,
@@ -120,7 +122,7 @@ function POSPage() {
       setCart([]);
       setCashier("");
       load();
-      toast.success("Sale completed");
+      toast.success(t('Sale completed'));
     } catch (e: unknown) {
       if (isNetworkError(e)) { saveOffline(); return; }
       const msg = e instanceof Error ? e.message : "Checkout failed";
@@ -138,13 +140,13 @@ function POSPage() {
       <div className="min-w-0">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
           <div>
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Point of Sale</h1>
-            <p className="text-sm text-muted-foreground">Tap a medicine to add it to the cart</p>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">{t('Point of Sale')}</h1>
+            <p className="text-sm text-muted-foreground">{t('Tap a medicine to add it to the cart')}</p>
           </div>
         </div>
         <div className="relative mb-4">
           <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search medicines or scan barcode…" className="pl-9 h-11" />
+          <Input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder{t('Search medicines or scan barcode…' )} className="pl-9 h-11" />
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-3">
           {filtered.map((m) => (
@@ -160,7 +162,7 @@ function POSPage() {
               </Card>
             </button>
           ))}
-          {filtered.length === 0 && <div className="col-span-full text-center text-muted-foreground py-12">No medicines available</div>}
+          {filtered.length === 0 && <div className="col-span-full text-center text-muted-foreground py-12">{t('No medicines available')}</div>}
         </div>
       </div>
 
@@ -168,12 +170,12 @@ function POSPage() {
       <Card className="p-4 sm:p-5 lg:sticky lg:top-4 self-start lg:max-h-[calc(100vh-2rem)] flex flex-col">
         <div className="flex items-center gap-2 mb-4">
           <ShoppingCart className="size-5 text-primary" />
-          <h2 className="font-bold text-lg">Current Sale</h2>
+          <h2 className="font-bold text-lg">{t('Current Sale')}</h2>
           {cart.length > 0 && <span className="ml-auto text-xs bg-primary text-primary-foreground rounded-full px-2 py-0.5">{cart.length} items</span>}
         </div>
         <div className="flex-1 overflow-y-auto -mx-2 px-2 min-h-[100px]">
           {cart.length === 0 && (
-            <div className="text-center text-muted-foreground py-10 text-sm">Cart is empty</div>
+            <div className="text-center text-muted-foreground py-10 text-sm">{t('Cart is empty')}</div>
           )}
           {cart.map((i) => (
             <div key={i.medicine.id} className="flex flex-wrap items-center gap-2 py-3 border-b border-border last:border-0">
@@ -194,18 +196,18 @@ function POSPage() {
 
         <div className="border-t border-border pt-4 mt-2 space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <Input placeholder="Cashier name" value={cashier} onChange={(e) => setCashier(e.target.value)} />
+            <Input placeholder{t('Cashier name' )} value={cashier} onChange={(e) => setCashier(e.target.value)} />
             <Select value={payment} onValueChange={setPayment}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="cash">Cash</SelectItem>
-                <SelectItem value="telebirr">Telebirr</SelectItem>
-                <SelectItem value="cbe">CBE</SelectItem>
+                <SelectItem value="cash">{t('Cash')}</SelectItem>
+                <SelectItem value="telebirr">{t('Telebirr')}</SelectItem>
+                <SelectItem value="cbe">{t('CBE')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="flex items-baseline justify-between">
-            <span className="text-muted-foreground">Total</span>
+            <span className="text-muted-foreground">{t('Total')}</span>
             <span className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent" style={{ backgroundImage: "var(--gradient-hero)" }}>
               ETB {total.toFixed(2)}
             </span>
@@ -224,7 +226,7 @@ function POSPage() {
               <div className="size-12 mx-auto rounded-full bg-primary/10 text-primary grid place-items-center mb-2">
                 <CheckCircle2 className="size-7" />
               </div>
-              <h3 className="font-bold text-lg">Sale Completed</h3>
+              <h3 className="font-bold text-lg">{t('Sale Completed')}</h3>
               <div className="text-xs text-muted-foreground">Inventory Management · {lastReceipt.saleNumber}</div>
             </div>
             <div className="border-t border-dashed border-border pt-3 space-y-1.5 text-sm">
@@ -236,11 +238,11 @@ function POSPage() {
               ))}
             </div>
             <div className="border-t border-dashed border-border mt-3 pt-3 flex justify-between font-bold text-lg">
-              <span>Total</span><span>ETB {lastReceipt.total.toFixed(2)}</span>
+              <span>{t('Total')}</span><span>ETB {lastReceipt.total.toFixed(2)}</span>
             </div>
             <div className="flex gap-2 mt-5">
-              <Button variant="outline" className="flex-1" onClick={() => window.print()}>Print</Button>
-              <Button className="flex-1" onClick={() => setLastReceipt(null)}>New Sale</Button>
+              <Button variant="outline" className="flex-1" onClick={() => window.print()}>{t('Print')}</Button>
+              <Button className="flex-1" onClick={() => setLastReceipt(null)}>{t('New Sale')}</Button>
             </div>
           </Card>
         </div>
