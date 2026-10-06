@@ -12,10 +12,10 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/app/onboarding")({
   head: () => ({
     meta: [
-      { title: "Set up your pharmacy — Inventory Management" },
-      { name: "description", content: "Create your pharmacy workspace to start managing inventory, sales and staff." },
-      { property: "og:title", content: "Set up your pharmacy" },
-      { property: "og:description", content: "Create your pharmacy workspace to start managing inventory, sales and staff." },
+      { title: t("Set up your pharmacy — Inventory Management") },
+      { name: "description", content: t("Create your pharmacy workspace to start managing inventory, sales and staff.") },
+      { property: "og:title", content: t("Set up your pharmacy") },
+      { property: "og:description", content: t("Create your pharmacy workspace to start managing inventory, sales and staff.") },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -54,7 +54,7 @@ function OnboardingPage() {
       window.location.assign(plan === "inventory" ? "/app/inventory" : "/app/dashboard");
       return;
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not create pharmacy");
+      toast.error(err instanceof Error ? err.message : t("Could not create pharmacy"));
     } finally {
       setBusy(false);
     }
@@ -93,7 +93,7 @@ function OnboardingPage() {
             </div>
             <p className="text-xs text-muted-foreground mt-2">{t('14 days free. After that, pay your provider monthly to keep access.')}</p>
           </div>
-          <Button type="submit" className="w-full" disabled={busy}>{busy ? "Creating…" : "Create pharmacy"}</Button>
+          <Button type="submit" className="w-full" disabled={busy}>{busy ? t("Creating…") : t("Create pharmacy")}</Button>
         </form>
       </Card>
     </div>

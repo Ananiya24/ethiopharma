@@ -16,10 +16,10 @@ import { useRole } from "@/hooks/use-role";
 
 export const Route = createFileRoute("/app/inventory")({
   head: () => ({ meta: [
-    { title: "Inventory — Inventory Management" },
-    { name: "description", content: "Manage pharmacy medicine stock, prices and expiry dates." },
-    { property: "og:title", content: "Inventory — Inventory Management" },
-    { property: "og:description", content: "Manage pharmacy medicine stock, prices and expiry dates." },
+    { title: t("Inventory — Inventory Management") },
+    { name: "description", content: t("Manage pharmacy medicine stock, prices and expiry dates.") },
+    { property: "og:title", content: t("Inventory — Inventory Management") },
+    { property: "og:description", content: t("Manage pharmacy medicine stock, prices and expiry dates.") },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
@@ -151,7 +151,7 @@ function InventoryPage() {
       setOpen(false);
       load();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Save failed");
+      toast.error(e instanceof Error ? e.message : t("Save failed"));
     } finally {
       setSaving(false);
     }
@@ -191,7 +191,7 @@ function InventoryPage() {
           </DialogTrigger>
           <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-lg max-h-[85vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editing ? "Edit medicine" : "Add medicine"}</DialogTitle>
+              <DialogTitle>{editing ? t("Edit medicine") : t("Add medicine")}</DialogTitle>
               <DialogDescription>{t('Fields marked * are required.')}</DialogDescription>
             </DialogHeader>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -240,7 +240,7 @@ function InventoryPage() {
               <Field
                 label={t('Unit price (ETB) *' )}
                 className={isOwner ? "" : "sm:col-span-2"}
-                hint={!isOwner && editing ? "Only the pharmacy owner can change prices." : undefined}
+                hint={!isOwner && editing ? t("Only the pharmacy owner can change prices.") : undefined}
               >
                 <Input
                   type="number"
@@ -258,7 +258,7 @@ function InventoryPage() {
             </div>
             <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">
               <Button variant="outline" onClick={() => setOpen(false)}>{t('Cancel')}</Button>
-              <Button onClick={save} disabled={saving}>{saving ? "Saving…" : editing ? "Update" : "Add"}</Button>
+              <Button onClick={save} disabled={saving}>{saving ? t("Saving…") : editing ? t("Update") : t("Add")}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

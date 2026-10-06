@@ -13,10 +13,10 @@ import { cacheMedicines, cachedMedicines, enqueueSale, isNetworkError, syncQueue
 
 export const Route = createFileRoute("/app/pos")({
   head: () => ({ meta: [
-    { title: "Point of Sale — Inventory Management" },
-    { name: "description", content: "Process medicine sales and track pharmacy stock." },
-    { property: "og:title", content: "Point of Sale — Inventory Management" },
-    { property: "og:description", content: "Process medicine sales and track pharmacy stock." },
+    { title: t("Point of Sale — Inventory Management") },
+    { name: "description", content: t("Process medicine sales and track pharmacy stock.") },
+    { property: "og:title", content: t("Point of Sale — Inventory Management") },
+    { property: "og:description", content: t("Process medicine sales and track pharmacy stock.") },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
@@ -152,7 +152,7 @@ function POSPage() {
           {filtered.map((m) => (
             <button key={m.id} onClick={() => addToCart(m)} className="text-left">
               <Card className="p-3 sm:p-4 hover:border-primary hover:shadow-[var(--shadow-card)] transition-all cursor-pointer h-full">
-                <div className="text-xs text-primary font-medium">{m.category ?? "Medicine"}</div>
+                <div className="text-xs text-primary font-medium">{m.category ?? t("Medicine")}</div>
                 <div className="font-semibold mt-1 line-clamp-2">{m.name}</div>
                 {m.brand && <div className="text-xs text-muted-foreground">{m.brand}</div>}
                 <div className="mt-3 flex items-end justify-between">
@@ -213,7 +213,7 @@ function POSPage() {
             </span>
           </div>
           <Button className="w-full h-12 text-base" disabled={cart.length === 0 || processing} onClick={checkout}>
-            <Receipt className="size-5 mr-2" /> {processing ? "Processing…" : "Complete Sale"}
+            <Receipt className="size-5 mr-2" /> {processing ? t("Processing…") : t("Complete Sale")}
           </Button>
         </div>
       </Card>

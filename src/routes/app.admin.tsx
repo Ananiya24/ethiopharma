@@ -15,10 +15,10 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/app/admin")({
   head: () => ({
     meta: [
-      { title: "Pharmacies & Subscriptions — Admin" },
-      { name: "description", content: "Manage every pharmacy using the software, their subscription status and payments." },
-      { property: "og:title", content: "Pharmacies & Subscriptions — Admin" },
-      { property: "og:description", content: "Manage every pharmacy using the software, their subscription status and payments." },
+      { title: t("Pharmacies & Subscriptions — Admin") },
+      { name: "description", content: t("Manage every pharmacy using the software, their subscription status and payments.") },
+      { property: "og:title", content: t("Pharmacies & Subscriptions — Admin") },
+      { property: "og:description", content: t("Manage every pharmacy using the software, their subscription status and payments.") },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -101,7 +101,7 @@ function AdminPage() {
     const fee = plan === "inventory" ? 3900 : 6900;
     const { error } = await supabase.rpc("admin_update_subscription", { _pharmacy_id: row.id, _plan: plan, _monthly_fee: fee });
     if (error) return toast.error(error.message);
-    toast.success(`${row.name} moved to ${plan === "inventory" ? "Inventory only" : "Inventory + POS"}`);
+    toast.success(`${row.name} moved to ${plan === "inventory" ? t("Inventory only") : t("Inventory + POS")}`);
     load();
   }
 
@@ -224,7 +224,7 @@ function AdminPage() {
           </div>
           <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">
             <Button variant="ghost" onClick={() => setPayFor(null)}>{t('Cancel')}</Button>
-            <Button onClick={recordPayment} disabled={saving}>{saving ? "Saving…" : "Save payment"}</Button>
+            <Button onClick={recordPayment} disabled={saving}>{saving ? t("Saving…") : t("Save payment")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

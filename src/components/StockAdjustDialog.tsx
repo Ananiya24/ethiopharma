@@ -10,15 +10,15 @@ import { toast } from "sonner";
 
 export const REASONS = {
   in: [
-    { value: "delivery", label: "New delivery from supplier" },
-    { value: "returned", label: "Returned by customer" },
-    { value: "correction_in", label: "Count correction (add)" },
+    { value: "delivery", label: t("New delivery from supplier") },
+    { value: "returned", label: t("Returned by customer") },
+    { value: "correction_in", label: t("Count correction (add)") },
   ],
   out: [
-    { value: "dispensed", label: "Sold / dispensed" },
-    { value: "damaged", label: "Damaged" },
-    { value: "expired", label: "Expired — thrown away" },
-    { value: "correction_out", label: "Count correction (remove)" },
+    { value: "dispensed", label: t("Sold / dispensed") },
+    { value: "damaged", label: t("Damaged") },
+    { value: "expired", label: t("Expired — thrown away") },
+    { value: "correction_out", label: t("Count correction (remove)") },
   ],
 } as const;
 
@@ -62,7 +62,7 @@ export function StockAdjustDialog({
     <Dialog open={!!medicine} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{direction === "in" ? "Stock in" : "Stock out"} — {medicine?.name}</DialogTitle>
+          <DialogTitle>{direction === "in" ? t("Stock in") : t("Stock out")} — {medicine?.name}</DialogTitle>
           <DialogDescription>Currently {medicine?.quantity ?? 0} in stock.</DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
@@ -75,7 +75,7 @@ export function StockAdjustDialog({
             <Select value={reason} onValueChange={setReason}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                {REASONS[direction].map((r) => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
+                {REASONS[direction].map((r) => <SelectItem key={r.value} value={r.value}>{t(r.label)}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
@@ -86,7 +86,7 @@ export function StockAdjustDialog({
         </div>
         <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">
           <Button variant="ghost" onClick={onClose}>{t('Cancel')}</Button>
-          <Button onClick={save} disabled={saving}>{saving ? "Saving…" : "Save"}</Button>
+          <Button onClick={save} disabled={saving}>{saving ? t("Saving…") : t("Save")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -8,10 +8,10 @@ import { Activity } from "lucide-react";
 
 export const Route = createFileRoute("/app/activity")({
   head: () => ({ meta: [
-    { title: "Activity log — Inventory Management" },
-    { name: "description", content: "Review changes to pharmacy medicines and inventory." },
-    { property: "og:title", content: "Activity log — Inventory Management" },
-    { property: "og:description", content: "Review changes to pharmacy medicines and inventory." },
+    { title: t("Activity log — Inventory Management") },
+    { name: "description", content: t("Review changes to pharmacy medicines and inventory.") },
+    { property: "og:title", content: t("Activity log — Inventory Management") },
+    { property: "og:description", content: t("Review changes to pharmacy medicines and inventory.") },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),

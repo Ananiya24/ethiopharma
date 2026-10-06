@@ -14,10 +14,10 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/staff")({
   head: () => ({ meta: [
-    { title: "Staff — Inventory Management" },
-    { name: "description", content: "Manage pharmacist accounts for your pharmacy." },
-    { property: "og:title", content: "Staff — Inventory Management" },
-    { property: "og:description", content: "Manage pharmacist accounts for your pharmacy." },
+    { title: t("Staff — Inventory Management") },
+    { name: "description", content: t("Manage pharmacist accounts for your pharmacy.") },
+    { property: "og:title", content: t("Staff — Inventory Management") },
+    { property: "og:description", content: t("Manage pharmacist accounts for your pharmacy.") },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),
@@ -57,7 +57,7 @@ function StaffPage() {
       if (error) throw new Error(error.message);
       setRows((data as unknown as StaffRow[]) ?? []);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to load staff");
+      toast.error(e instanceof Error ? e.message : t("Failed to load staff"));
     } finally {
       setLoading(false);
     }
@@ -82,7 +82,7 @@ function StaffPage() {
       setEmail(""); setPassword(""); setOpen(false);
       load();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to create account");
+      toast.error(e instanceof Error ? e.message : t("Failed to create account"));
     } finally {
       setBusy(false);
     }
@@ -96,7 +96,7 @@ function StaffPage() {
       toast.success(t('Access removed'));
       load();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to delete");
+      toast.error(e instanceof Error ? e.message : t("Failed to delete"));
     }
   }
 
@@ -125,7 +125,7 @@ function StaffPage() {
               </div>
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t('Cancel')}</Button>
-                <Button type="submit" disabled={busy}>{busy ? "Creating…" : "Create account"}</Button>
+                <Button type="submit" disabled={busy}>{busy ? t("Creating…") : t("Create account")}</Button>
               </DialogFooter>
             </form>
           </DialogContent>
