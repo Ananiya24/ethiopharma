@@ -67,7 +67,7 @@ function AppLayout() {
             const active = pathname.startsWith(n.to);
             return (
               <Link key={n.to} to={n.to} className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition ${active ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary hover:text-foreground"}`}>
-                <Icon className="size-4" /> {n.label}
+                <Icon className="size-4" /> {t(n.label)}
               </Link>
             );
           })}
@@ -95,7 +95,7 @@ function AppLayout() {
             const active = pathname.startsWith(n.to);
             return (
               <Link key={n.to} to={n.to} className={`flex-1 min-w-[72px] flex flex-col items-center gap-0.5 py-2.5 text-[11px] leading-tight ${active ? "text-primary" : "text-muted-foreground"}`}>
-                <Icon className="size-5" /> <span className="truncate max-w-full px-1">{n.label}</span>
+                <Icon className="size-5" /> <span className="truncate max-w-full px-1">{t(n.label)}</span>
               </Link>
             );
           })}
