@@ -16,10 +16,10 @@ import { useRole } from "@/hooks/use-role";
 
 export const Route = createFileRoute("/app/inventory")({
   head: () => ({ meta: [
-    { title: t("Inventory — Inventory Management") },
-    { name: "description", content: t("Manage pharmacy medicine stock, prices and expiry dates.") },
-    { property: "og:title", content: t("Inventory — Inventory Management") },
-    { property: "og:description", content: t("Manage pharmacy medicine stock, prices and expiry dates.") },
+    { title: "Inventory — Inventory Management" },
+    { name: "description", content: "Manage pharmacy medicine stock, prices and expiry dates." },
+    { property: "og:title", content: "Inventory — Inventory Management" },
+    { property: "og:description", content: "Manage pharmacy medicine stock, prices and expiry dates." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),

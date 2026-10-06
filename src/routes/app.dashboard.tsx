@@ -10,10 +10,10 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 
 export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [
-    { title: t("Dashboard — Inventory Management") },
-    { name: "description", content: t("Review pharmacy sales, profit, stock levels and alerts.") },
-    { property: "og:title", content: t("Dashboard — Inventory Management") },
-    { property: "og:description", content: t("Review pharmacy sales, profit, stock levels and alerts.") },
+    { title: "Dashboard — Inventory Management" },
+    { name: "description", content: "Review pharmacy sales, profit, stock levels and alerts." },
+    { property: "og:title", content: "Dashboard — Inventory Management" },
+    { property: "og:description", content: "Review pharmacy sales, profit, stock levels and alerts." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),

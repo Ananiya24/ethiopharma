@@ -14,10 +14,10 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/staff")({
   head: () => ({ meta: [
-    { title: t("Staff — Inventory Management") },
-    { name: "description", content: t("Manage pharmacist accounts for your pharmacy.") },
-    { property: "og:title", content: t("Staff — Inventory Management") },
-    { property: "og:description", content: t("Manage pharmacist accounts for your pharmacy.") },
+    { title: "Staff — Inventory Management" },
+    { name: "description", content: "Manage pharmacist accounts for your pharmacy." },
+    { property: "og:title", content: "Staff — Inventory Management" },
+    { property: "og:description", content: "Manage pharmacist accounts for your pharmacy." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),

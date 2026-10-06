@@ -12,10 +12,10 @@ import { useSubscription } from "@/hooks/use-role";
 
 export const Route = createFileRoute("/app/reports")({
   head: () => ({ meta: [
-    { title: tr("Reports — Inventory Management") },
-    { name: "description", content: tr("Daily and weekly sales, VAT and profit reports for your pharmacy.") },
-    { property: "og:title", content: tr("Reports — Inventory Management") },
-    { property: "og:description", content: tr("Daily and weekly sales, VAT and profit reports for your pharmacy.") },
+    { title: "Reports — Inventory Management" },
+    { name: "description", content: "Daily and weekly sales, VAT and profit reports for your pharmacy." },
+    { property: "og:title", content: "Reports — Inventory Management" },
+    { property: "og:description", content: "Daily and weekly sales, VAT and profit reports for your pharmacy." },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary" },
   ] }),

@@ -12,10 +12,10 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/app/onboarding")({
   head: () => ({
     meta: [
-      { title: t("Set up your pharmacy — Inventory Management") },
-      { name: "description", content: t("Create your pharmacy workspace to start managing inventory, sales and staff.") },
-      { property: "og:title", content: t("Set up your pharmacy") },
-      { property: "og:description", content: t("Create your pharmacy workspace to start managing inventory, sales and staff.") },
+      { title: "Set up your pharmacy — Inventory Management" },
+      { name: "description", content: "Create your pharmacy workspace to start managing inventory, sales and staff." },
+      { property: "og:title", content: "Set up your pharmacy" },
+      { property: "og:description", content: "Create your pharmacy workspace to start managing inventory, sales and staff." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

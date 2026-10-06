@@ -15,10 +15,10 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/app/admin")({
   head: () => ({
     meta: [
-      { title: t("Pharmacies & Subscriptions — Admin") },
-      { name: "description", content: t("Manage every pharmacy using the software, their subscription status and payments.") },
-      { property: "og:title", content: t("Pharmacies & Subscriptions — Admin") },
-      { property: "og:description", content: t("Manage every pharmacy using the software, their subscription status and payments.") },
+      { title: "Pharmacies & Subscriptions — Admin" },
+      { name: "description", content: "Manage every pharmacy using the software, their subscription status and payments." },
+      { property: "og:title", content: "Pharmacies & Subscriptions — Admin" },
+      { property: "og:description", content: "Manage every pharmacy using the software, their subscription status and payments." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

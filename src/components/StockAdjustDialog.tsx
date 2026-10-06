@@ -10,15 +10,15 @@ import { toast } from "sonner";
 
 export const REASONS = {
   in: [
-    { value: "delivery", label: t("New delivery from supplier") },
-    { value: "returned", label: t("Returned by customer") },
-    { value: "correction_in", label: t("Count correction (add)") },
+    { value: "delivery", label: "New delivery from supplier" },
+    { value: "returned", label: "Returned by customer" },
+    { value: "correction_in", label: "Count correction (add)" },
   ],
   out: [
-    { value: "dispensed", label: t("Sold / dispensed") },
-    { value: "damaged", label: t("Damaged") },
-    { value: "expired", label: t("Expired — thrown away") },
-    { value: "correction_out", label: t("Count correction (remove)") },
+    { value: "dispensed", label: "Sold / dispensed" },
+    { value: "damaged", label: "Damaged" },
+    { value: "expired", label: "Expired — thrown away" },
+    { value: "correction_out", label: "Count correction (remove)" },
   ],
 } as const;
 
