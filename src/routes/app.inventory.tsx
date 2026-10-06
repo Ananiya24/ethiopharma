@@ -233,12 +233,12 @@ function InventoryPage() {
                 <Input type="number" inputMode="numeric" value={form.reorder_level} onChange={(e) => setForm({ ...form, reorder_level: e.target.value })} />
               </Field>
               {isOwner && (
-                <Field label{t('Cost price (ETB)' )} hint={t('What you pay the supplier. Used to calculate profit. Owner-only.' )}>
+                <Field label={t('Cost price (ETB)' )} hint={t('What you pay the supplier. Used to calculate profit. Owner-only.' )}>
                   <Input type="number" step="0.01" inputMode="decimal" value={form.cost_price} onChange={(e) => setForm({ ...form, cost_price: e.target.value })} placeholder="" />
                 </Field>
               )}
               <Field
-                label{t('Unit price (ETB) *' )}
+                label={t('Unit price (ETB) *' )}
                 className={isOwner ? "" : "sm:col-span-2"}
                 hint={!isOwner && editing ? "Only the pharmacy owner can change prices." : undefined}
               >

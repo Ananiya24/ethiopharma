@@ -47,10 +47,10 @@ export function InventoryReport({ from, to }: { from: string; to: string }) {
   return (
     <div className="space-y-4">
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
-        <Kpi label{t('Stock value (cost)' )} value={ETB(d.stock_value_cost)} sub={`${d.medicine_count} medicines · ${d.units} units`} />
-        <Kpi label{t('Stock value (selling price)' )} value={ETB(d.stock_value_retail)} sub={`Potential profit ${ETB(d.stock_value_retail - d.stock_value_cost)}`} />
+        <Kpi label={t('Stock value (cost)' )} value={ETB(d.stock_value_cost)} sub={`${d.medicine_count} medicines · ${d.units} units`} />
+        <Kpi label={t('Stock value (selling price)' )} value={ETB(d.stock_value_retail)} sub={`Potential profit ${ETB(d.stock_value_retail - d.stock_value_cost)}`} />
         <Kpi label={t('Units in / out' )} value={`+${inQty} / −${outQty}`} sub={t('in this period' )} />
-        <Kpi label{t('Losses (damaged + expired)' )} value={ETB(loss)} sub={t('at cost price' )} />
+        <Kpi label={t('Losses (damaged + expired)' )} value={ETB(loss)} sub={t('at cost price' )} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
