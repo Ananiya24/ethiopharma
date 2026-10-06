@@ -82,11 +82,11 @@ function OnboardingPage() {
                 <button type="button" key={p.id} onClick={() => setPlan(p.id)}
                   className={`text-left rounded-lg border p-3 transition ${plan === p.id ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border hover:border-primary/50"}`}>
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="font-semibold">{p.name}</span>
+                    <span className="font-semibold">{t(p.name)}</span>
                     <span className="font-bold whitespace-nowrap">{p.price} <span className="text-xs font-normal text-muted-foreground">{t('birr/month')}</span></span>
                   </div>
                   <ul className="mt-2 space-y-1">
-                    {p.features.map((f) => <li key={f} className="text-xs text-muted-foreground flex gap-1.5"><Check className="size-3.5 text-primary shrink-0 mt-px" />{f}</li>)}
+                    {p.features.map((f) => <li key={f} className="text-xs text-muted-foreground flex gap-1.5"><Check className="size-3.5 text-primary shrink-0 mt-px" />{t(f)}</li>)}
                   </ul>
                 </button>
               ))}

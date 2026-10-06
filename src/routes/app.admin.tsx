@@ -159,7 +159,7 @@ function AdminPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge className={`${statusStyle[r.subscription_status]} border-0`}>{r.subscription_status.replace("_", " ")}</Badge>
+                  <Badge className={`${statusStyle[r.subscription_status]} border-0`}>{t(r.subscription_status.replace("_", " "))}</Badge>
                   <span className={`text-xs ${left < 0 ? "text-destructive" : left <= 7 ? "text-amber-600" : "text-muted-foreground"}`}>
                     {left < 0 ? `expired ${-left}d ago` : `${left}d left`}
                   </span>
