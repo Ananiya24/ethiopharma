@@ -47,8 +47,8 @@ export function InventoryReport({ from, to }: { from: string; to: string }) {
   return (
     <div className="space-y-4">
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
-        <Kpi label={t('Stock value (cost)' )} value={ETB(d.stock_value_cost)} sub={`${d.medicine_count} medicines · ${d.units} units`} />
-        <Kpi label={t('Stock value (selling price)' )} value={ETB(d.stock_value_retail)} sub={`Potential profit ${ETB(d.stock_value_retail - d.stock_value_cost)}`} />
+        <Kpi label={t('Stock value (cost)' )} value={ETB(d.stock_value_cost)} sub={`${d.medicine_count} ${t("medicines")} · ${d.units} ${t("units")}`} />
+        <Kpi label={t('Stock value (selling price)' )} value={ETB(d.stock_value_retail)} sub={`${t("Potential profit")} ${ETB(d.stock_value_retail - d.stock_value_cost)}`} />
         <Kpi label={t('Units in / out' )} value={`+${inQty} / −${outQty}`} sub={t('in this period' )} />
         <Kpi label={t('Losses (damaged + expired)' )} value={ETB(loss)} sub={t('at cost price' )} />
       </div>
@@ -59,7 +59,7 @@ export function InventoryReport({ from, to }: { from: string; to: string }) {
           <CardContent className="space-y-2 text-sm">
             {d.by_reason.length === 0 && <div className="text-muted-foreground">{t('No stock movements in this period.')}</div>}
             {d.by_reason.map((r) => (
-              <div key={r.reason} className="flex justify-between gap-2"><span>{t(REASON_LABEL[r.reason] ?? r.reason)}</span><span className="text-muted-foreground">{r.qty} units · {ETB(r.value)}</span></div>
+              <div key={r.reason} className="flex justify-between gap-2"><span>{t(REASON_LABEL[r.reason] ?? r.reason)}</span><span className="text-muted-foreground">{r.qty} {t("units")} · {ETB(r.value)}</span></div>
             ))}
           </CardContent>
         </Card>
@@ -76,7 +76,7 @@ export function InventoryReport({ from, to }: { from: string; to: string }) {
         <Card>
           <CardHeader><CardTitle className="text-base text-destructive">{t('Expired but still in stock')}</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm">
-            {d.expired_in_stock.map((r) => <div key={r.name} className="flex justify-between gap-2"><span className="truncate">{r.name} · expired {r.expiry_date}</span><span className="text-muted-foreground">{r.quantity} units · {ETB(r.value)}</span></div>)}
+            {d.expired_in_stock.map((r) => <div key={r.name} className="flex justify-between gap-2"><span className="truncate">{r.name} · {t("expired")} {r.expiry_date}</span><span className="text-muted-foreground">{r.quantity} {t("units")} · {ETB(r.value)}</span></div>)}
           </CardContent>
         </Card>
       )}

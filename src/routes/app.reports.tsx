@@ -132,7 +132,7 @@ function ReportsPage() {
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">{view === "daily" ? tr("Daily") : tr("Weekly")} breakdown</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base">{view === "daily" ? tr("Daily") : tr("Weekly")} {tr("breakdown")}</CardTitle></CardHeader>
         <CardContent className="overflow-x-auto">
           <table className="w-full text-sm min-w-[640px]">
             <thead className="text-left text-muted-foreground border-b border-border">

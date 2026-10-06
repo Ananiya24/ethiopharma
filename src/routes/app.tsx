@@ -46,7 +46,7 @@ function AppLayout() {
       ? !subscription.active
         ? { tone: "destructive" as const, text: t("Your subscription has ended. Selling is disabled — please contact your provider to renew.") }
         : subscription.days_left <= 7
-          ? { tone: "warning" as const, text: `Your subscription ends in ${subscription.days_left} day${subscription.days_left === 1 ? "" : "s"}. Contact your provider to renew.` }
+          ? { tone: "warning" as const, text: `${t("Days left on subscription")}: ${subscription.days_left}. ${t("Contact your provider to renew.")}` }
           : null
       : null;
   return (

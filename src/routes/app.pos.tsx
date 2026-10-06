@@ -157,7 +157,7 @@ function POSPage() {
                 {m.brand && <div className="text-xs text-muted-foreground">{m.brand}</div>}
                 <div className="mt-3 flex items-end justify-between">
                   <div className="font-bold text-base sm:text-lg">ETB {Number(m.unit_price).toFixed(2)}</div>
-                  <div className="text-xs text-muted-foreground">{m.quantity} in stock</div>
+                  <div className="text-xs text-muted-foreground">{m.quantity} {t("in stock")}</div>
                 </div>
               </Card>
             </button>
@@ -171,7 +171,7 @@ function POSPage() {
         <div className="flex items-center gap-2 mb-4">
           <ShoppingCart className="size-5 text-primary" />
           <h2 className="font-bold text-lg">{t('Current Sale')}</h2>
-          {cart.length > 0 && <span className="ml-auto text-xs bg-primary text-primary-foreground rounded-full px-2 py-0.5">{cart.length} items</span>}
+          {cart.length > 0 && <span className="ml-auto text-xs bg-primary text-primary-foreground rounded-full px-2 py-0.5">{cart.length} {t("items")}</span>}
         </div>
         <div className="flex-1 overflow-y-auto -mx-2 px-2 min-h-[100px]">
           {cart.length === 0 && (
@@ -227,7 +227,7 @@ function POSPage() {
                 <CheckCircle2 className="size-7" />
               </div>
               <h3 className="font-bold text-lg">{t('Sale Completed')}</h3>
-              <div className="text-xs text-muted-foreground">Inventory Management · {lastReceipt.saleNumber}</div>
+              <div className="text-xs text-muted-foreground">{t("Inventory Management")} · {lastReceipt.saleNumber}</div>
             </div>
             <div className="border-t border-dashed border-border pt-3 space-y-1.5 text-sm">
               {lastReceipt.items.map((i) => (

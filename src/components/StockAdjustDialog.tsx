@@ -54,7 +54,7 @@ export function StockAdjustDialog({
     const { data, error } = await supabase.rpc("adjust_stock", { _medicine_id: medicine.id, _quantity: n, _reason: reason, _note: note || undefined });
     setSaving(false);
     if (error) return toast.error(error.message);
-    toast.success(`${medicine.name}: ${direction === "in" ? "+" : "−"}${n} · now ${data} in stock`);
+    toast.success(`${medicine.name}: ${direction === "in" ? "+" : "−"}${n} · ${t("Currently in stock")}: ${data}`);
     onDone(); onClose();
   }
 
@@ -63,7 +63,7 @@ export function StockAdjustDialog({
       <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{direction === "in" ? t("Stock in") : t("Stock out")} — {medicine?.name}</DialogTitle>
-          <DialogDescription>Currently {medicine?.quantity ?? 0} in stock.</DialogDescription>
+          <DialogDescription>{t("Currently in stock")}: {medicine?.quantity ?? 0}</DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
           <div>
