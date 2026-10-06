@@ -89,7 +89,8 @@ function AuthPage() {
             <div className="text-xs text-muted-foreground">{t('for Pharmacy')}</div>
           </div>
         </div>
-        <h1 className="text-2xl font-bold mb-1">{mode === "signup" ? "Register your pharmacy" : "Sign in"}</h1>
+        <h1 className="text-2xl font-bold mb-1">{mode === "signup" ? t("Register your pharmacy") : t("Sign in")}</h1>
+        <div className="mb-4"><Button variant="outline" size="sm" onClick={() => setLanguage(language === "am" ? "en" : "am")}>{language === "am" ? "English" : "አማርኛ"}</Button></div>
         <p className="text-sm text-muted-foreground mb-6">
           {mode === "signup"
             ? "Create an owner account, then name your pharmacy. Your data stays private to your pharmacy."

@@ -73,15 +73,16 @@ function AppLayout() {
           })}
         </nav>
         <div className="m-3 space-y-1">
+          <div className="px-3 pb-1"><Button variant="outline" size="sm" onClick={() => setLanguage(language === "am" ? "en" : "am")}>{language === "am" ? "English" : "አማርኛ"}</Button></div>
           {email && <div className="px-3 text-[11px] text-muted-foreground truncate">{email}</div>}
           <Button variant="ghost" size="sm" className="w-full justify-start" onClick={signOut}>
-            <LogOut className="size-3.5 mr-2" /> Sign out
+            <LogOut className="size-3.5 mr-2" /> {t('Sign out')}
           </Button>
           <Link to="/" className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-muted-foreground hover:bg-secondary">
-            <Home className="size-3.5" /> Back to website
+            <Home className="size-3.5" /> {t('Back to website')}
           </Link>
           <div className="px-3 pt-2 text-[10px] text-muted-foreground">
-            Made with <span className="font-semibold text-foreground">Zylos Tech</span>
+            {t('Made with')} <span className="font-semibold text-foreground">Zylos Tech</span>
           </div>
         </div>
 
@@ -109,6 +110,7 @@ function AppLayout() {
             <SheetHeader className="text-left"><SheetTitle>{t('Account')}</SheetTitle></SheetHeader>
             {email && <p className="text-sm text-muted-foreground break-all">{email}</p>}
             <div className="flex flex-col gap-2 border-t border-border pt-4">
+              <Button variant="outline" size="sm" onClick={() => setLanguage(language === "am" ? "en" : "am")}>{language === "am" ? "English" : "አማርኛ"}</Button>
               <Button variant="ghost" className="justify-start" onClick={signOut}><LogOut className="size-4 mr-2" />{t('Sign out')}</Button>
               <Button variant="ghost" className="justify-start" asChild><Link to="/"><Home className="size-4 mr-2" />{t('Back to website')}</Link></Button>
             </div>
