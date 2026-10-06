@@ -78,7 +78,7 @@ function DashboardPage() {
             <KPI icon={DollarSign} label={t("Today's revenue" )} value={ETB(stats.today_revenue)} sub={`${stats.today_count} sales`} />
             <KPI icon={TrendingUp} label={t("Today's profit" )} value={ETB(stats.today_profit)} sub={t('est.' )} />
             <KPI icon={ShoppingCart} label={t('7-day revenue' )} value={ETB(stats.week_revenue)} sub={`${stats.week_count} sales`} />
-            <KPI icon={Package} label={t('Inventory value' )} value={ETB(stats.inventory_value)} sub={`${stats.medicine_count} items`} />
+            <KPI icon={Package} label={t('Inventory value' )} value={ETB(stats.inventory_value)} sub={`${stats.medicine_count} ${t("items")}`} />
           </div>
 
           {/* Chart + Payments */}
@@ -110,7 +110,7 @@ function DashboardPage() {
                 <div className="border-t pt-3 flex items-center justify-between font-semibold">
                   <span>{t('Total')}</span><span>{ETB(stats.today_revenue)}</span>
                 </div>
-                <div className="text-xs text-muted-foreground">30-day profit: {ETB(stats.month_profit)} · 30-day revenue: {ETB(stats.month_revenue)}</div>
+                <div className="text-xs text-muted-foreground">{t("30-day profit")}: {ETB(stats.month_profit)} · {t("30-day revenue")}: {ETB(stats.month_revenue)}</div>
               </CardContent>
             </Card>
           </div>

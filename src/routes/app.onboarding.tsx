@@ -54,7 +54,7 @@ function OnboardingPage() {
       window.location.assign(plan === "inventory" ? "/app/inventory" : "/app/dashboard");
       return;
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not create pharmacy");
+      toast.error(err instanceof Error ? err.message : t("Could not create pharmacy"));
     } finally {
       setBusy(false);
     }
@@ -82,18 +82,18 @@ function OnboardingPage() {
                 <button type="button" key={p.id} onClick={() => setPlan(p.id)}
                   className={`text-left rounded-lg border p-3 transition ${plan === p.id ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border hover:border-primary/50"}`}>
                   <div className="flex items-baseline justify-between gap-2">
-                    <span className="font-semibold">{p.name}</span>
+                    <span className="font-semibold">{t(p.name)}</span>
                     <span className="font-bold whitespace-nowrap">{p.price} <span className="text-xs font-normal text-muted-foreground">{t('birr/month')}</span></span>
                   </div>
                   <ul className="mt-2 space-y-1">
-                    {p.features.map((f) => <li key={f} className="text-xs text-muted-foreground flex gap-1.5"><Check className="size-3.5 text-primary shrink-0 mt-px" />{f}</li>)}
+                    {p.features.map((f) => <li key={f} className="text-xs text-muted-foreground flex gap-1.5"><Check className="size-3.5 text-primary shrink-0 mt-px" />{t(f)}</li>)}
                   </ul>
                 </button>
               ))}
             </div>
             <p className="text-xs text-muted-foreground mt-2">{t('14 days free. After that, pay your provider monthly to keep access.')}</p>
           </div>
-          <Button type="submit" className="w-full" disabled={busy}>{busy ? "Creating…" : "Create pharmacy"}</Button>
+          <Button type="submit" className="w-full" disabled={busy}>{busy ? t("Creating…") : t("Create pharmacy")}</Button>
         </form>
       </Card>
     </div>

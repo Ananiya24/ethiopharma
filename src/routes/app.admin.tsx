@@ -101,7 +101,7 @@ function AdminPage() {
     const fee = plan === "inventory" ? 3900 : 6900;
     const { error } = await supabase.rpc("admin_update_subscription", { _pharmacy_id: row.id, _plan: plan, _monthly_fee: fee });
     if (error) return toast.error(error.message);
-    toast.success(`${row.name} moved to ${plan === "inventory" ? "Inventory only" : "Inventory + POS"}`);
+    toast.success(`${row.name} moved to ${plan === "inventory" ? t("Inventory only") : t("Inventory + POS")}`);
     load();
   }
 
@@ -154,12 +154,12 @@ function AdminPage() {
                   <div className="min-w-0">
                     <div className="font-semibold truncate">{r.name}</div>
                     <div className="text-xs text-muted-foreground">
-                      {r.staff_count} staff · {r.medicine_count} medicines · {r.sales_count} sales · {Number(r.revenue_30d).toFixed(2)} sold in 30 days
+                      {r.staff_count} {t("staff")} · {r.medicine_count} {t("medicines")} · {r.sales_count} {t("sales")} · {Number(r.revenue_30d).toFixed(2)} {t("sold in 30 days")}
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge className={`${statusStyle[r.subscription_status]} border-0`}>{r.subscription_status.replace("_", " ")}</Badge>
+                  <Badge className={`${statusStyle[r.subscription_status]} border-0`}>{t(r.subscription_status.replace("_", " "))}</Badge>
                   <span className={`text-xs ${left < 0 ? "text-destructive" : left <= 7 ? "text-amber-600" : "text-muted-foreground"}`}>
                     {left < 0 ? `expired ${-left}d ago` : `${left}d left`}
                   </span>
@@ -196,7 +196,7 @@ function AdminPage() {
                 <Button className="w-full sm:w-auto" onClick={() => { setPayFor(r); setAmount(String(r.monthly_fee)); }}>
                   <Wallet className="size-4 mr-2" /> Record payment
                 </Button>
-                <span className="text-xs text-muted-foreground sm:ml-auto">Paid to date: {Number(r.paid_total).toFixed(2)}</span>
+                <span className="text-xs text-muted-foreground sm:ml-auto">{t("Paid to date")}: {Number(r.paid_total).toFixed(2)}</span>
               </div>
             </Card>
           );
@@ -206,7 +206,7 @@ function AdminPage() {
 
       <Dialog open={!!payFor} onOpenChange={(o) => !o && setPayFor(null)}>
         <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md">
-          <DialogHeader><DialogTitle>Record payment — {payFor?.name}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{t("Record payment")} — {payFor?.name}</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div>
               <Label className="text-xs">{t('Amount received')}</Label>
@@ -224,7 +224,7 @@ function AdminPage() {
           </div>
           <DialogFooter className="flex-col-reverse gap-2 sm:flex-row">
             <Button variant="ghost" onClick={() => setPayFor(null)}>{t('Cancel')}</Button>
-            <Button onClick={recordPayment} disabled={saving}>{saving ? "Saving…" : "Save payment"}</Button>
+            <Button onClick={recordPayment} disabled={saving}>{saving ? t("Saving…") : t("Save payment")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

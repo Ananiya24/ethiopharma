@@ -90,7 +90,7 @@ function ReportsPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold">{tr('Reports')}</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground">{invOnly ? "Stock value, stock in/out, losses and reorders" : "Sales, VAT, profit and stock for any period"}</p>
+          <p className="text-xs sm:text-sm text-muted-foreground">{invOnly ? tr("Stock value, stock in/out, losses and reorders") : tr("Sales, VAT, profit and stock for any period")}</p>
         </div>
         <div className="flex gap-2 print:hidden">
           {!invOnly && (
@@ -132,11 +132,11 @@ function ReportsPage() {
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">{view === "daily" ? "Daily" : "Weekly"} breakdown</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base">{view === "daily" ? tr("Daily") : tr("Weekly")} {tr("breakdown")}</CardTitle></CardHeader>
         <CardContent className="overflow-x-auto">
           <table className="w-full text-sm min-w-[640px]">
             <thead className="text-left text-muted-foreground border-b border-border">
-              <tr><th className="py-2">{view === "daily" ? "Date" : "Week of"}</th><th>{tr('Sales')}</th><th className="text-right">{tr('Revenue')}</th><th className="text-right">{tr('VAT')}</th><th className="text-right">{tr('Cost')}</th><th className="text-right">{tr('Profit')}</th></tr>
+              <tr><th className="py-2">{view === "daily" ? tr("Date") : tr("Week of")}</th><th>{tr('Sales')}</th><th className="text-right">{tr('Revenue')}</th><th className="text-right">{tr('VAT')}</th><th className="text-right">{tr('Cost')}</th><th className="text-right">{tr('Profit')}</th></tr>
             </thead>
             <tbody>
               {rows.length === 0 && <tr><td colSpan={6} className="py-6 text-center text-muted-foreground">{tr('No sales in this period.')}</td></tr>}

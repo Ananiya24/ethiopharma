@@ -71,7 +71,7 @@ function AuthPage() {
         if (error) throw error;
       }
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Authentication failed");
+      toast.error(e instanceof Error ? e.message : t("Authentication failed"));
     } finally {
       setLoading(false);
     }
@@ -93,8 +93,8 @@ function AuthPage() {
         <div className="mb-4"><Button variant="outline" size="sm" onClick={() => setLanguage(language === "am" ? "en" : "am")}>{language === "am" ? "English" : "አማርኛ"}</Button></div>
         <p className="text-sm text-muted-foreground mb-6">
           {mode === "signup"
-            ? "Create an owner account, then name your pharmacy. Your data stays private to your pharmacy."
-            : "Pharmacist accounts are created by the pharmacy owner. Ask the owner for your login credentials."}
+            ? t("Create an owner account, then name your pharmacy. Your data stays private to your pharmacy.")
+            : t("Pharmacist accounts are created by the pharmacy owner. Ask the owner for your login credentials.")}
         </p>
         <form onSubmit={submit} className="space-y-4">
           <div>
@@ -106,14 +106,14 @@ function AuthPage() {
             <Input id="pw" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Please wait…" : mode === "signup" ? "Create owner account" : "Sign in"}
+            {loading ? t("Please wait…") : mode === "signup" ? t("Create owner account") : t("Sign in")}
           </Button>
           <button
             type="button"
             className="w-full text-xs text-muted-foreground hover:text-foreground"
             onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
           >
-            {mode === "signup" ? "Already have an account? Sign in" : "New pharmacy? Register here"}
+            {mode === "signup" ? t("Already have an account? Sign in") : t("New pharmacy? Register here")}
           </button>
         </form>
         <div className="mt-6 pt-4 border-t border-border flex items-center justify-center gap-2 text-xs text-muted-foreground">

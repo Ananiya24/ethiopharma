@@ -44,9 +44,9 @@ function AppLayout() {
   const expiry =
     subscription && !isPlatformAdmin
       ? !subscription.active
-        ? { tone: "destructive" as const, text: "Your subscription has ended. Selling is disabled — please contact your provider to renew." }
+        ? { tone: "destructive" as const, text: t("Your subscription has ended. Selling is disabled — please contact your provider to renew.") }
         : subscription.days_left <= 7
-          ? { tone: "warning" as const, text: `Your subscription ends in ${subscription.days_left} day${subscription.days_left === 1 ? "" : "s"}. Contact your provider to renew.` }
+          ? { tone: "warning" as const, text: `${t("Days left on subscription")}: ${subscription.days_left}. ${t("Contact your provider to renew.")}` }
           : null
       : null;
   return (
@@ -123,7 +123,7 @@ function AppLayout() {
         {(!online || pending > 0) && (
           <div className="flex items-center gap-2 px-4 py-2 text-sm bg-muted text-foreground">
             <WifiOff className="size-4 shrink-0" />
-            <span>{!online ? "You are offline. Sales are saved on this device" : "Uploading offline sales"}{pending > 0 ? ` · ${pending} waiting to upload` : ""}.</span>
+            <span>{!online ? t("You are offline. Sales are saved on this device") : t("Uploading offline sales")}{pending > 0 ? ` · ${pending} waiting to upload` : ""}.</span>
           </div>
         )}
         {expiry && (
