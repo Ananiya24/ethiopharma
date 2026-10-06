@@ -64,7 +64,7 @@ export function InventoryReport({ from, to }: { from: string; to: string }) {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-base">Need to reorder ({d.reorder.length})</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-base">{t("Need to reorder")} ({d.reorder.length})</CardTitle></CardHeader>
           <CardContent className="space-y-2 text-sm max-h-64 overflow-y-auto">
             {d.reorder.length === 0 && <div className="text-muted-foreground">{t('All stocked up.')}</div>}
             {d.reorder.map((r) => <div key={r.name} className="flex justify-between"><span className="truncate pr-2">{r.name}</span><span className="text-muted-foreground">{r.quantity} / {r.reorder_level}</span></div>)}
